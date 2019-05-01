@@ -1,5 +1,5 @@
 ---
-title: 'MeinteR: Prioritizing differentially methylated CpGs using local genomic signatures'
+title: '¬MeinteR: Prioritizing aberrant DNA methylation using local genomic signatures'
 date: "`r Sys.Date()`"
 bibliography: Meinter.bib
 csl: bioinformatics.csl
@@ -35,7 +35,7 @@ To download and install MeinteR and its dependencies, you need to install `devto
 
 ```
 library(devtools)
-devtools::install_bitbucket("andigoni/meinter", quiet=TRUE)
+devtools::install_github("andigoni/meinter", quiet=TRUE)
 ```
 Alternatively, download the binary installation file, unzip it to a folder e.g. `~/MeinteR` and run the following commands:
 ```

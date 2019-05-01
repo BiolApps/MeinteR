@@ -1,6 +1,6 @@
 ![Meinter Logo](vignettes/figs/meinter.png)
 
-MeinteR (MEthylation INTERpretation) is an R package that identifies critical differentially methylated sites, based on the following hypothesis: Critical meth-ylation-mediated changes are more likely in genomic regions enriched in cis-acting regulatory elements than in genomic “deserts”. MeinteR calculates the abundance of co-localized elements, such as transcription factor binding sites, tentative splice sites, and other DNA features, such as G-quadruplexes and palindromes that potentially lead to distinct DNA conformational features and rank them with respect to their putative methylation impact.
+MeinteR (MEthylation INTERpretation) is an R package that identifies critical differentially methylated sites, based on the following hypothesis: Critical methylation-mediated changes are more likely in genomic regions enriched in cis-acting regulatory elements than in genomic “deserts”. MeinteR calculates the abundance of co-localized elements, such as transcription factor binding sites, tentative splice sites, and other DNA features, such as G-quadruplexes and palindromes that potentially lead to distinct DNA conformational features and rank them with respect to their putative methylation impact.
 
 ---
 
@@ -34,17 +34,11 @@ MeinteR and its dependencies can be directly installed using the following comma
 devtools::install_bitbucket("andigoni/meinter", quiet=FALSE)
 ```
 
-Use Case 1: Genome-wide association of G-quadruplexes with DNA methylation using TCGA/GEO breast cancer datasets
+[Use Case 1: Genome-wide association of G-quadruplexes with DNA methylation using TCGA/GEO breast cancer datasets](vignettes/UseCase1.Rmd)
 
-[Use Case 1](vignettes/UseCase1.Rmd)
+[Use Case 2: Evaluation of genomic signatures on cancer methylation profiles](vignettes/UseCase2.Rmd)
 
-Use Case 2: Evaluation of genomic signatures on cancer methylation profiles
-
-[Use Case 2](vignettes/UseCase2.Rmd)
-
-Use Case 3: Associating genomic DMS signatures with gene expression
-
-[Use Case 3](vignettes/UseCase3.Rmd)
+[Use Case 3: Associating genomic DMS signatures with gene expression](vignettes/UseCase3.Rmd)
 
 
 

@@ -13,11 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r evaluation1, eval=FALSE}
 ###############################################
-# Evaluation - Number 1
+# Use Case 1
 # Title - TCGA/GSE66695 cancer profiles for breast cancer (BRCA)
-# Description - Abundance of G4-forming sequences among probes 
-# with high/low and differential methylation between matched 
-# primary solid tumor and normal samples.
 ###############################################
 
 library(dplyr)

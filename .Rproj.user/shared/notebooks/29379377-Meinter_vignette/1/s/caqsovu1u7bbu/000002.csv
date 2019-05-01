@@ -1,4 +1,0 @@
-"0","plotTF(tfbs[[1]], topTF=10) #topTF:Number of most frequent transcription factors
-"
-"2","Error in aes_string(x, y) : object 'x' not found
-"

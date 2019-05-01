@@ -1,18 +1,9 @@
 ---
 title: 'MeinteR: Prioritizing differentially methylated CpGs using local genomic signatures'
-date: "2019-01-19"
+date: "2 May 2019"
 bibliography: Meinter.bib
-csl: bioinformatics.csl
+csl: bibl.csl
 output:
-  word_document:
-    fig_caption: yes
-  html_document:
-    highlight: espresso
-    theme: spacelab
-    toc: yes
-    fig_caption: yes
-    keep_md: yes
-    number_sections: yes
   pdf_document:
     fig_caption: yes
     fig_height: 3
@@ -20,6 +11,15 @@ output:
     highlight: tango
     number_sections: yes
     toc: yes
+  html_document:
+    highlight: espresso
+    theme: spacelab
+    toc: yes
+    fig_caption: yes
+    keep_md: yes
+    number_sections: yes
+  word_document:
+    fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{MeinteR}
   \usepackage[utf8]{inputenc}
@@ -35,7 +35,7 @@ To download and install MeinteR and its dependencies, you need to install `devto
 
 ```
 library(devtools)
-devtools::install_bitbucket("andigoni/meinter", quiet=TRUE)
+devtools::install_github("andigoni/meinter", quiet=TRUE)
 ```
 Alternatively, download the binary installation file, unzip it to a folder e.g. `~/MeinteR` and run the following commands:
 ```

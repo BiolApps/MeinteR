@@ -13,9 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r evaluation2, eval=FALSE}
 ###############################################
-# Evaluation - Number 2
+# Use Case 2
 # Title - Building cancer profiles with genomic signatures of DNA methylation
-# Description - GEO data series containing DNA methylation levels for several cancer types (tumor/normal samples) and calculated the abundance of the features in differentially methylated sites and compared the statistical significance between those with increased and descreased methylation.
 ###############################################
 
 
@@ -23,7 +22,6 @@ library(dplyr)
 library(MeinteR)
 library(TCGAbiolinks)
 library(ggplot2)
-#library(lattice)
 
 
 thr = 0.3
