@@ -1,0 +1,512 @@
+subsample.2 <- sample[sample$score >= 0.30,]
+df <-findTFBS(subsample.2[1:10,],persim=90,offset=10)
+plotTF(df, topTF=10)
+source('~/Desktop/MeinteR/R/transf.R')
+source('~/Desktop/MeinteR/R/transf.R')
+r <- ggplot(data=fdf, aes(x=freq, V2)) +
+geom_point() +
+geom_text(data=subset(fdf, freq > summary(fdf$freq)[["Mean"]] | V2 > summary(fdf$V2)[["Mean"]]), aes(label=x),hjust=0, vjust=0) +
+scale_x_continuous(name = "Transcription factors per class (Observed)") +
+scale_y_continuous(name = "Reference transcription factors per class (Expected)") +
+geom_smooth(method=lm , color="purple", se=TRUE, fill="lightblue") +
+ggtitle("Most frequent transcription factor classes with respect to their expectancy") +
+theme(plot.title = element_text(family = "Arial", size=14, hjust = 0.5, lineheight=.4, face="bold")) +
+geom_rug(col="steelblue",alpha=0.1, size=1.5)
+r
+source('~/Desktop/MeinteR/R/transf.R')
+r <- ggplot(data=fdf, aes(x=freq, V2)) +
+geom_point() +
+geom_text(data=subset(fdf, freq > summary(fdf$freq)[["Mean"]] | V2 > summary(fdf$V2)[["Mean"]]), aes(label=x),hjust=0, vjust=0) +
+scale_x_continuous(name = "Transcription factors per class (Observed)") +
+scale_y_continuous(name = "Reference transcription factors per class (Expected)") +
+geom_smooth(method=lm , color="purple", se=TRUE, fill="lightpurple") +
+ggtitle("Most frequent transcription factor classes with respect to their expectancy") +
+theme(plot.title = element_text(family = "Arial", size=14, hjust = 0.5, lineheight=.4, face="bold")) +
+geom_rug(col="steelblue",alpha=0.1, size=1.5)
+r
+source('~/Desktop/MeinteR/R/transf.R')
+ggplot(data=fdf, aes(x=freq, V2)) +
+geom_point() +
+geom_text(data=subset(fdf, freq > summary(fdf$freq)[["Mean"]] | V2 > summary(fdf$V2)[["Mean"]]), aes(label=x),hjust=0, vjust=0) +
+scale_x_continuous(name = "Transcription factors per class (Observed)") +
+scale_y_continuous(name = "Reference transcription factors per class (Expected)") +
+geom_smooth(method=lm , color="purple", se=TRUE, fill="lightgrey") +
+ggtitle("Most frequent transcription factor classes with respect to their expectancy") +
+theme(plot.title = element_text(family = "Arial", size=14, hjust = 0.5, lineheight=.4, face="bold")) +
+geom_rug(col="steelblue",alpha=0.1, size=1.5)
+source('~/Desktop/MeinteR/R/transf.R')
+source('~/Desktop/MeinteR/R/transf.R')
+source('~/Desktop/MeinteR/R/transf.R')
+plotTF <- function(df, topTF=NULL){
+if (empty(df)) {stop('Data frame is empty')}
+if (is.null(topTF)){topTF<-10}
+freq.TF<-as.data.frame(table(df$TF),decreasing = TRUE)
+TF.seqs<-as.data.frame(table(df$TF,df$seqnames))
+TF.seqs.c<-as.data.frame(rowSums(table(TF.seqs$Var1,TF.seqs$Freq)[,-1]))
+TF.seqs.c$TF <- rownames(TF.seqs.c)
+colnames(TF.seqs.c)=c("seq.num","TF")
+colnames(freq.TF)=c("TF","TF.freq")
+df.merge <- merge(freq.TF, TF.seqs.c, by = "TF")
+df.merge<-df.merge[ order(-df.merge$TF.freq, -df.merge$seq.num), ]
+top <- df.merge[1:topTF,]
+if (min(top$seq.num<1/500*top$TF.freq)) {message("The number of sequences is too low to appear in the barchart")}
+cols <- c("plum1","plum4")
+p <- ggplot(top, aes(x,y)) +
+geom_bar(stat="identity", aes(x=top$TF,y=top$TF.freq, fill = "Total TFBS"),width=0.8,colour="grey",alpha=0.5,position = "identity")+
+geom_bar(stat="identity", aes(x=top$TF,y=top$seq.num, fill = "Sequences with TFBS"),width=0.6,colour="grey",alpha=0.5,position = "identity")+
+scale_x_discrete(name = "Transcription factors") +
+scale_y_discrete(limits = c(0,top$TF.freq),name = "Number of transcription factor binding sites") +
+geom_text(aes(x = top$TF, y = top$TF.freq,label=top$TF.freq)) +
+geom_text(aes(x = top$TF, y = top$seq.num,label=top$seq.num)) +
+ggtitle("Most frequent transcription factors") +
+scale_fill_manual(name="Legend",values=cols) +
+theme(legend.position="bottom") +
+theme(plot.title = element_text(family = "Garamond", size=20, hjust = 0.5, lineheight=.8, face="bold"))
+#Plot the frequency of each TF class
+cnt =count(df$class)
+q <- ggplot(cnt, aes(x,y)) +
+geom_bar(stat="identity", aes(x=cnt$x,y=cnt$freq),width=0.8,colour="grey37",alpha=0.5,position = "identity")+
+scale_x_discrete(name = "Transcription factor classes") +
+scale_y_discrete(limits = c(0,cnt$freq),name = "Number of transcription factor binding sites") +
+geom_text(aes(x = cnt$x, y = cnt$freq,label=cnt$freq)) +
+ggtitle("Most frequent transcription factor classes") +
+theme(plot.title = element_text(family = "Garamond", size=20, hjust = 0.5, lineheight=.8, face="bold")) +
+coord_flip()
+data(TFclass)
+head(TF.class)
+fdf <- merge(cnt,TF.class, by.x="x",by.y="V1")
+r <- ggplot(data=fdf, aes(x=freq, V2)) +
+geom_point() +
+geom_text(data=subset(fdf, freq > summary(fdf$freq)[["Mean"]] | V2 > summary(fdf$V2)[["Mean"]]), aes(label=x),hjust=0, vjust=0) +
+scale_x_continuous(name = "Transcription factors per class (Observed)") +
+scale_y_continuous(name = "Reference transcription factors per class (Expected)") +
+geom_smooth(method=lm , color="purple", se=TRUE, fill="lightgrey") +
+ggtitle("Most frequent transcription factor classes with respect to their expectancy") +
+theme(plot.title = element_text(family = "Arial", size=14, hjust = 0.5, lineheight=.4, face="bold")) +
+geom_rug(col="steelblue",alpha=0.1, size=1.5)
+ret <- list()
+ret[[1]] <- p
+ret[[2]] <- q
+ret[[3]] <- r
+return(ret)
+}
+plotTF(df, topTF=10)
+?data
+library(MeinteR)
+library(MeinteR)
+citr:::insert_citation()
+citr:::insert_citation()
+Tumor <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204465_ch22.bed",sep="\t", header = FALSE)
+Tumor <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204465_chr22.bed",sep="\t", header = FALSE)
+Tumor <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204465_chr22_T.bed",sep="\t", header = FALSE)
+Normal <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204466_chr22_N.bed",sep="\t", header = FALSE)
+citr:::insert_citation()
+citr:::insert_citation()
+library(MeinteR)
+Tumor <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204465_chr22_T.bed",sep="\t", header = FALSE)
+Normal <-read.csv(file="/Users/andigoni/Meinter_real_example/GSM1204466_chr22_N.bed",sep="\t", header = FALSE)
+head(Tumor)
+View(Tumor)
+project.dir = "~/Meinter_real_example"
+setwd(project.dir)
+getwd()
+Tumor <-read.csv(file="GSM1204465_chr22_T.bed",sep="\t", header = FALSE)
+#Select data by coverage (min depth = 10)
+#Split column with coverage
+colnames(Tumor)=colnames(Normal)=c("chr","start","end","depth","score", "strand")
+Tumor$depth<-gsub('[0-9]+/', '', Tumor$depth)
+Tumor$depth<-as.integer(gsub('\'', '', Tumor$depth))
+Normal$depth<-gsub('[0-9]+/', '', Normal$depth)
+Normal$depth<-gsub('\'', '', Normal$depth)
+#Keep records with depth>=10
+Tumor.d20<-Tumor[Tumor$depth>=10,]
+Normal.d20<-Normal[Normal$depth>=10,]
+#Keep records with depth>=10
+Tumor.d20<-Tumor[Tumor$depth>=20,]
+Normal.d20<-Normal[Normal$depth>=20,]
+Tumor <-reorder2Bed(Tumor.d20, 1,2,3,5,6)
+Normal <-reorder2Bed(Normal.d20, 1,2,3,5,6)
+delta.beta <- merge(Tumor, Normal, by=c("chr","start","end", "strand"))
+d<- density(delta.beta$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", main = "Density distribution of the beta values")
+grid (NULL,NULL, lty = 6, col = "lightgrey")
+polygon(d, col = adjustcolor("gold", alpha=0.2), border="black")
+polygon(density(delta.beta$score.x, na.rm = TRUE, kernel="gaussian"),col = adjustcolor("steelblue4", alpha=0.2))
+legend("topright", c("Tumor", "Normal"), fill = c(adjustcolor("gold", alpha=0.5), adjustcolor("steelblue4", alpha=0.2)))
+#Select differential hypermethylated CpGs (Delta-beta>=600)
+sub.db <- delta.beta[delta.beta$score.y-delta.beta$score.x>=800,]
+sub.db$score <- sub.db$score.y-sub.db$score.x
+d<- density(sub.db$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", xlim=c(0,1000),main = "Density distribution of the beta values")
+grid (NULL,NULL, lty = 6, col = "lightgrey")
+polygon(d, col = adjustcolor("gold", alpha=0.2), border="black")
+polygon(density(sub.db$score.x, na.rm = TRUE, kernel="gaussian"),col = adjustcolor("steelblue4", alpha=0.2))
+legend("topright", c("Tumor", "Normal"), fill = c(adjustcolor("gold", alpha=0.5), adjustcolor("steelblue4", alpha=0.2)))
+bed.data<-sub.db[,c(1:4,7)]
+#Select differential hypermethylated CpGs (Delta-beta>=600)
+sub.db <- delta.beta[delta.beta$score.y-delta.beta$score.x>=600,]
+sub.db$score <- sub.db$score.y-sub.db$score.x
+d<- density(sub.db$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", xlim=c(0,1000),main = "Density distribution of the beta values")
+grid (NULL,NULL, lty = 6, col = "lightgrey")
+polygon(d, col = adjustcolor("gold", alpha=0.2), border="black")
+polygon(density(sub.db$score.x, na.rm = TRUE, kernel="gaussian"),col = adjustcolor("steelblue4", alpha=0.2))
+legend("topright", c("Tumor", "Normal"), fill = c(adjustcolor("gold", alpha=0.5), adjustcolor("steelblue4", alpha=0.2)))
+bed.data<-sub.db[,c(1:4,7)]
+GSM.tfbs<-findTFBS(bed.data[1:10,],persim = 80,offset = 12)
+plotTF(GSM.tfbs)
+GSM.alt.spl<-findAltSplicing(bed.data)
+GSM.alt.spl[[3]] #Plot the distribution of alternative events
+GSM.con.tfbs<-findConservedTFBS(bed.data, known.conserved.tfbs.file ="/Users/andigoni/Desktop/stuff/INAB/ucsc_tables/hg19/tfbsConsSites.gz")
+scatterTF(GSM.con.tfbs[[2]])
+GSM.quads <- findQuads(bed.data)
+scatterConsTF(GSM.con.tfbs[[2]])
+list.of.packages <- c("ggplot2", "parallel", "plyr","stats4","reshape2", "pqsfinder",BSgenome.Hsapiens.UCSC.hg19, GenomicRanges, BSgenome,tidyverse,Biostrings,
+"XVector",
+"GenomeInfoDb",
+"S4Vectors",
+"stats4",
+"stats",
+"IRanges",
+"BiocGenerics",
+"parallel",
+"base",
+"rtracklayer",
+"reshape2",
+"TFBSTools",
+"DNAshapeR",
+"JASPAR2018" )
+list.of.packages <- c("ggplot2", "parallel", "plyr","stats4","reshape2", "pqsfinder","BSgenome.Hsapiens.UCSC.hg19", "GenomicRanges", "BSgenome","tidyverse","Biostrings",
+"XVector",
+"GenomeInfoDb",
+"S4Vectors",
+"stats4",
+"stats",
+"IRanges",
+"BiocGenerics",
+"parallel",
+"base",
+"rtracklayer",
+"reshape2",
+"TFBSTools",
+"DNAshapeR",
+"JASPAR2018" )
+list.of.packages <- c("ggplot2", "parallel", "plyr","stats4","reshape2", "pqsfinder","BSgenome.Hsapiens.UCSC.hg19", "GenomicRanges",
+"BSgenome","tidyverse","Biostrings","XVector","GenomeInfoDb","S4Vectors","stats4", "stats","IRanges","BiocGenerics",
+"parallel","base","rtracklayer","reshape2","TFBSTools","DNAshapeR","JASPAR2018" )
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+packages <- c("ggplot2", "parallel", "plyr","stats4","reshape2", "pqsfinder","BSgenome.Hsapiens.UCSC.hg19", "GenomicRanges",
+"BSgenome","tidyverse","Biostrings","XVector","GenomeInfoDb","S4Vectors","stats4", "stats","IRanges","BiocGenerics",
+"parallel","base","rtracklayer","reshape2","TFBSTools","DNAshapeR","JASPAR2018" )
+new.packages <- list.of.packages[!(packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+bioconductor.packages <- c("BSgenome.Hsapiens.UCSC.hg19","GenomicRanges","rtracklayer", "BiocGenerics","S4Vectors", "IRanges","GenomeInfoDb","BSgenome","Biostrings","XVector")
+bioc.packages <- bioconductor.packages[!(bioconductor.packages  %in% installed.packages()[,"Package"])]
+if (length(bioc.packages)) {
+source("http://bioconductor.org/biocLite.R")
+biocLite(bioc.packages)
+}
+DNA.ALPHABET <- c("A", "C", "G","T")
+JASPAR.SPECIES <- 9606 # 9606: Homo Sapiens #  Human genome support only
+n.bed = reorder2Bed(sample,1,2,3,5,4) #Reorder columns to match bed-formatted data
+group= n.bed[abs(n.bed$score) >= 0.70, ] #Apply functions to sites that turn hypermethylated
+#To select columns from the differential site report of RnBeads:
+#cat diffMethTable_site_cmp1.csv |  awk -F "," '{print $3" "$4" "$4+1" "$5" "$8}' > ~/Desktop/MeinteR/coad.sites.csv
+rm(list=ls())
+#To select columns from the differential site report of RnBeads:
+#cat diffMethTable_site_cmp1.csv |  awk -F "," '{print $3" "$4" "$4+1" "$5" "$8}' > ~/Desktop/MeinteR/coad.sites.csv
+rm(list=ls())
+packages <- c("ggplot2", "parallel", "plyr","stats4","reshape2", "pqsfinder","BSgenome.Hsapiens.UCSC.hg19", "GenomicRanges",
+"BSgenome","tidyverse","Biostrings","XVector","GenomeInfoDb","S4Vectors","stats4", "stats","IRanges","BiocGenerics",
+"parallel","base","rtracklayer","reshape2","TFBSTools","DNAshapeR","JASPAR2018" )
+new.packages <- list.of.packages[!(packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+new.packages <- packages[!(packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+bioconductor.packages <- c("BSgenome.Hsapiens.UCSC.hg19","GenomicRanges","rtracklayer", "BiocGenerics","S4Vectors", "IRanges","GenomeInfoDb","BSgenome","Biostrings","XVector")
+bioc.packages <- bioconductor.packages[!(bioconductor.packages  %in% installed.packages()[,"Package"])]
+if (length(bioc.packages)) {
+source("http://bioconductor.org/biocLite.R")
+biocLite(bioc.packages)
+}
+DNA.ALPHABET <- c("A", "C", "G","T")
+JASPAR.SPECIES <- 9606 # 9606: Homo Sapiens #  Human genome support only
+n.bed = reorder2Bed(sample,1,2,3,5,4) #Reorder columns to match bed-formatted data
+#Test on sample data loaded in MeinteR
+library(MeinteR)
+n.bed = reorder2Bed(sample,1,2,3,5,4) #Reorder columns to match bed-formatted data
+group= n.bed[abs(n.bed$score) >= 0.70, ] #Apply functions to sites that turn hypermethylated
+?findTFBS
+## Identify transcription factor binding sites in the neighboring sequences
+tfbs <-findTFBS(group,persim=90,offset=15)
+plotTF(df, topTF=30) #Plot the most frequent transcription factors
+plotTF(tfbs, topTF=30) #Plot the most frequent transcription factors
+plotTF(tfbs, topTF=20) #Plot the most frequent transcription factors
+c.tfbs <- findConservedTFBS(group, known.conserved.tfbs.file = "/Users/andigoni/Desktop/stuff/INAB/ucsc_tables/hg19/tfbsConsSites.gz")
+scatterTF(c.tfbs[[2]])
+cons.scatterTF(c.tfbs[[2]])
+scatterConsTF(c.tfbs[[2]])
+## Identify known alternative splicing events containing the target cytosine
+alt.sp <-findAltSplicing(group, known.alt.splice = "/Users/andigoni/Downloads/knownAlt")
+alt.sp[[3]] #Create a bar chart with the frequencies of the alternative splicing events
+#Find G-quadruplex structures in the neighboring sequences
+G4 = findQuads(group, 200)
+G4[[1]] #List of DNAString objects
+G4[[2]] # Average density plot
+plotCpG(bed.sample=group, offset=1000)
+plotCpG(bed.sample=group, offset=1000)
+?plotCpG
+plotCpG(bed.data=group, offset=1000)
+?findShapes
+findShapes(group, offset=100)
+Shapes <-findShapes(group, offset=100)
+## Identify palindromic motifs in the neighboring sequences
+findPals(group, length=10, min.arm=5, max.loop=5, max.mismatch=1)
+?findPals
+## Identify palindromic motifs in the neighboring sequences
+findPals(group, offset=10, min.arm=5, max.loop=5, max.mismatch=1)
+## Identify palindromic motifs in the neighboring sequences
+findPals(group, offset=10, min.arm=5, max.loop=5, max.mismatch=0)
+n.bed = reorder2Bed(sample,1,2,3,5,4) #Reorder columns to match bed-formatted data
+group= n.bed[n.bed$score >= 0.60, ] #Apply functions to sites that turn to be hypermethylated
+## Identify transcription factor binding sites in the neighboring sequences
+tfbs <-findTFBS(group,persim=90,offset=15)
+plotTF(tfbs, topTF=20) #Plot the most frequent transcription factors
+## Identify known alternative splicing events containing the target cytosine
+alt.sp <-findAltSplicing(group, known.alt.splice = "/Users/andigoni/Downloads/knownAlt")
+alt.sp[[3]] #Create a bar chart with the frequencies of the alternative splicing events
+## Identify palindromic motifs in the neighboring sequences
+findPals(group, offset=10, min.arm=5, max.loop=5, max.mismatch=0)
+#Find G-quadruplex structures in the neighboring sequences
+G4 = findQuads(group, 200)
+G4[[2]] # Average density plot
+plotCpG(bed.data=group, offset=1000) #Plot GC-content and observed/expected CpG ratio compared to genome-wide CpG islands
+Shapes <-findShapes(group, offset=100)
+Tumor <-read.csv(file="~/Meinter_real_example/GSM1204465_chr22_T.bed",sep="\t", header = FALSE)
+Normal <-read.csv(file="~/Meinter_real_example/GSM1204466_chr22_N.bed",sep="\t", header = FALSE)
+#Select data by coverage (min depth = 10)
+#Split column with coverage
+colnames(Tumor)=colnames(Normal)=c("chr","start","end","depth","score", "strand")
+Tumor$depth<-gsub('[0-9]+/', '', Tumor$depth)
+Tumor$depth<-as.integer(gsub('\'', '', Tumor$depth))
+Normal$depth<-gsub('[0-9]+/', '', Normal$depth)
+Normal$depth<-gsub('\'', '', Normal$depth)
+#Keep records with depth>=10
+Tumor.d20<-Tumor[Tumor$depth>=20,]
+Normal.d20<-Normal[Normal$depth>=20,]
+Tumor <-reorder2Bed(Tumor.d20, 1,2,3,5,6)
+Normal <-reorder2Bed(Normal.d20, 1,2,3,5,6)
+delta.beta <- merge(Tumor, Normal, by=c("chr","start","end", "strand"))
+d<- density(delta.beta$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", main = "Density distribution of the beta values")
+d<- density(delta.beta$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", main = "Density distribution of the beta values")
+grid (NULL,NULL, lty = 6, col = "lightgrey")
+polygon(d, col = adjustcolor("gold", alpha=0.2), border="black")
+polygon(density(delta.beta$score.x, na.rm = TRUE, kernel="gaussian"),col = adjustcolor("steelblue4", alpha=0.2))
+legend("topright", c("Tumor", "Normal"), fill = c(adjustcolor("gold", alpha=0.5), adjustcolor("steelblue4", alpha=0.2)))
+#Select differential hypermethylated CpGs (Delta-beta>=600)
+sub.db <- delta.beta[delta.beta$score.y-delta.beta$score.x>=600,]
+sub.db$score <- sub.db$score.y-sub.db$score.x
+d<- density(sub.db$score.y, na.rm = TRUE, kernel="gaussian")
+plot(d, xlab="Beta values", xlim=c(0,1000),main = "Density distribution of the beta values")
+grid (NULL,NULL, lty = 6, col = "lightgrey")
+polygon(d, col = adjustcolor("gold", alpha=0.2), border="black")
+polygon(density(sub.db$score.x, na.rm = TRUE, kernel="gaussian"),col = adjustcolor("steelblue4", alpha=0.2))
+legend("topright", c("Tumor", "Normal"), fill = c(adjustcolor("gold", alpha=0.5), adjustcolor("steelblue4", alpha=0.2)))
+bed.data<-sub.db[,c(1:4,7)]
+View(bed.data)
+GSM.tfbs<-findTFBS(bed.data[1:10,],persim = 80,offset = 12)
+plotTF(GSM.tfbs)
+GSM.alt.spl<-findAltSplicing(bed.data)
+GSM.alt.spl[[3]] #Plot the distribution of alternative events
+GSM.con.tfbs<-findConservedTFBS(bed.data, known.conserved.tfbs.file ="/Users/andigoni/Desktop/stuff/INAB/ucsc_tables/hg19/tfbsConsSites.gz")
+source('~/Desktop/MeinteR/R/transf.R')
+known.conserved.tfbs.file ="/Users/andigoni/Desktop/stuff/INAB/ucsc_tables/hg19/tfbsConsSites.gz
+if (is.data.frame(bed.data) && nrow(bed.data)==0) {stop("The input dataframe with the differentially methylated sites is not set.")}
+#Download or load a local copy of the conserved transcription factors
+mySession <- browserSession("UCSC",url="http://genome-euro.ucsc.edu/cgi-bin/")
+genome(mySession)<-"hg19"
+if (is.null(known.conserved.tfbs.file)) {
+message("Fetching tfbsConsSites table from UCSC... ")
+message("Downloading. It may take few minutes")
+known.conserved.tfbs <-getTable(ucscTableQuery(mySession, table="tfbsConsSites"))
+} else {
+message("Loading local copy of UCSC/tfbsConsSites table")
+len <- length(unlist(strsplit(known.conserved.tfbs.file, "\\.")[[1]])) #Get the extension of the filename
+if (strsplit(known.conserved.tfbs.file, "\\.")[[1]][len] == "gz") { # Check if file is gzipped
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+} else {
+known.conserved.tfbs <- read.csv(known.conserved.tfbs.file,header=TRUE, sep="\t")
+}
+message("Fetching conserved transcription factors table (tfbsConsFactors)...")
+known.factors <-getTable(ucscTableQuery(mySession, table="tfbsConsFactors"))
+if (isEmpty(known.factors)) {stop("Unable to fetch table from UCSC. Check internet connection.")} else {message("DONE")}
+}
+known.conserved.tfbs.file ="/Users/andigoni/Desktop/stuff/INAB/ucsc_tables/hg19/tfbsConsSites.gz"
+if (is.null(known.conserved.tfbs.file)) {
+message("Fetching tfbsConsSites table from UCSC... ")
+message("Downloading. It may take few minutes")
+known.conserved.tfbs <-getTable(ucscTableQuery(mySession, table="tfbsConsSites"))
+} else {
+message("Loading local copy of UCSC/tfbsConsSites table")
+len <- length(unlist(strsplit(known.conserved.tfbs.file, "\\.")[[1]])) #Get the extension of the filename
+if (strsplit(known.conserved.tfbs.file, "\\.")[[1]][len] == "gz") { # Check if file is gzipped
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+} else {
+known.conserved.tfbs <- read.csv(known.conserved.tfbs.file,header=TRUE, sep="\t")
+}
+message("Fetching conserved transcription factors table (tfbsConsFactors)...")
+known.factors <-getTable(ucscTableQuery(mySession, table="tfbsConsFactors"))
+if (isEmpty(known.factors)) {stop("Unable to fetch table from UCSC. Check internet connection.")} else {message("DONE")}
+}
+is.null(known.conserved.tfbs.file)
+message("Loading local copy of UCSC/tfbsConsSites table")
+len <- length(unlist(strsplit(known.conserved.tfbs.file, "\\.")[[1]])) #Get the extension of the filename
+if (strsplit(known.conserved.tfbs.file, "\\.")[[1]][len] == "gz") { # Check if file is gzipped
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+} else {
+known.conserved.tfbs <- read.csv(known.conserved.tfbs.file,header=TRUE, sep="\t")
+}
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+known.factors <-getTable(ucscTableQuery(mySession, table="tfbsConsFactors"))
+if (isEmpty(known.factors)) {stop("Unable to fetch table from UCSC. Check internet connection.")} else {message("DONE")}
+known.factors <-getTable(ucscTableQuery(mySession, table="tfbsConsFactors"))
+View(known.factors)
+View(GSM.con.tfbs)
+View(tfbs)
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+known.conserved.tfbs <-read.csv(gzfile(known.conserved.tfbs.file), header=TRUE, sep="\t") #If yes unzip it
+View(known.conserved.tfbs)
+View(known.factors)
+human <- known.factors[known.factors$species=="human",]
+getwd()
+saveRDS(human[,c(1,4)]), "mymodel.rds")
+x <- human[,c(1,4)]
+View(x)
+saveRDS(human[,c(1,4)], "cTF.rds")
+library(MeinteR)
+source('~/Desktop/MeinteR/R/transf.R')
+source('~/Desktop/MeinteR/R/transf.R')
+cTF
+sample
+TF.class
+CpGislands
+save(human[,c(1,4)], "cTF.rda")
+save(human[,c(1,4)], file="cTF.rda")
+save(human[,c(1,4)], file="cTF.rda")
+human[,c(1,4)]
+save(human[,c(1,4)], file="cTF.rda")
+View(human)
+human[,c(1,4)]
+getwd()
+saveRDS(human[,c(1,4)], "cTF.rds")
+save(human[,c(1,4)], "cTF.rds")
+?save
+save(human[,c(1,4)], "cTF.RData")
+x<-human[,c(1,4)]
+save(x, "cTF.rda")
+save(x, file="cTF.rda")
+library(MeinteR)
+cTF
+sample
+sample
+library(MeinteR)
+devtools::load_all(".")
+library(MeinteR)
+library(MeinteR)
+cTF
+cTF
+libray(MeinteR)
+library(MeinteR)
+CpGislands
+cTF
+library(MeinteR)
+CpGislands
+cpgIslands<-CpGislands
+cpgIslands
+save(cpgIslands, file="cpgIslands")
+source('~/Desktop/MeinteR/R/transf.R')
+save(cpgIslands, file="cpgIslands.rda")
+head(cpgIslands)
+head(cTF)
+head(sample)
+head(TF.class)
+colnames(TF.class)<-c("class", "Number")
+TF.class
+save(TF.class, file="TF.class.rda")
+save(TF.class, file="TFclass.rda")
+colnames(TF.class)
+library(MeinteR)
+TF.class
+colnames(TF.class)
+save(TF.class, file="data/TFclass.rda", compress='xz')
+save(cpgIslands, file="data/cpgIslands.rda", compress='xz')
+save(cTF, file="data/cTF.rda", compress='xz')
+save(refFreq, file="data/refFreq.rda", compress='xz')
+save(sample, file="data/sample.rda", compress='xz')
+source('~/Desktop/MeinteR/R/transf.R')
+source('~/Desktop/MeinteR/R/transf.R')
+refFreq
+hist(refFreq$freq)
+plot(refFreq$freq)
+?hist
+hist(refFreq$freq, breaks=100)
+source("https://bioconductor.org/biocLite.R")
+biocLite("BiocCheck")
+sessionInfo()
+.libPaths()
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(pqsfinder)
+library(pqsfinder)
+library(BiocInstaller)
+biocValid()             ## R version 3.0 or later
+.libPaths()
+library(pqsfinder)
+.libPaths()
+devtools::build()
+devtools::check()
+devtools::install()
+devtools::load_all()
+tree
+biocLite("BiocCheck")
+library(BiocCheck)
+install.packages("testthat")
+library(testthat)
+devtools::test()
+devtools::test()
+library(BiocInstaller)
+useDevel()
+biocValid()              # checks for out of date packages
+biocLite()               # (optional) updates out of date packages
+.libPaths()
+library(MeinteR)
+head(bed.data)
+head(test.data)
+head(cpgIslands)
+test.data$chr[1:100]=cpgIslands$chrom[1:100]
+test.data$start[1:100]=cpgIslands$start[1:100]
+test.data$start[1:100]=cpgIslands$chromstart[1:100]
+test.data$start[1:100]=cpgIslands$chromStart[1:100]
+test.data$end[1:100]=cpgIslands$chromEnd[1:100]
+plotCpG(test.data)
+names()
+nameStudy("test data")
+NAME
+library(MeinteR)
+names
+name
+NAME
+library(MeinteR)
+library(MeinteR)
+NAME
+library(MeinteR)
+pkg.env$NAME
+pkg.env
+library(MeinteR)
+pkg.env
+plotCpG(test.data, offset=200)
+nameStudy("new study")
+plotCpG(test.data, offset=200)
+library(MeinteR)

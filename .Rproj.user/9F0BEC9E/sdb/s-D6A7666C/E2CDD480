@@ -1,0 +1,19 @@
+{
+    "contents" : "########################################################################################################################\n## Package    : MeinteR\n## File       : misc.R\n## Functions  : bed2seq\n##            : splitGroup\n##            : is.outofbound\n##            : is.empty\n## Updated    : 04-11-2015\n##\n## Title      : Supplementary functions\n########################################################################################################################\n\n\n#apply(known.alt, 1, bed2seq)\n\n \nload.File <- function(bed.file.name, group.thr) {\n  bed.data <- read.csv(bed.file.name, sep=\",\")\n  colnames(bed.data)<-c(\"chr\", \"start\",\"end\", \"strand\", \"score\")\n  bed.list= splitGroup(bed.data, group.thr)\n  return(bed.list)\n}\n\nbed2seq <- function(bedline, offset) {\n  #Depends on Biostrings, BSgenome.Hsapiens.UCSC.hg19\n  #split bed line chr, start, end,strand\n  seq <- getSeq(Hsapiens, bedline$chr ,start=bedline$start-offset, end=bedline$end+offset, strand=bedline$strand)\n  return(seq)\n}\n\nsplitGroup <- function (bed.data, group.thr) { \n  bed.data <- bed.data[!is.na(bed.data$score),]\n  g1.bed.data <- bed.data[abs(bed.data$score)>=group.thr,]\n  g2.bed.data <- bed.data[abs(bed.data$score)<group.thr,]\n  if (is.empty(g1.bed.data)) {stop(\"No records found with Δβ >=\", group.thr)}\n  if (is.empty(g2.bed.data)) {stop(\"No records found with Δβ < \", group.thr)}\n  result <- list()\n  result[[1]] <- g1.bed.data\n  result[[2]] <- g2.bed.data\n  return(result)\n}\n\n\nis.outofbound <- function(value,lval,hval){\n  #'lval: Lower limit of the valid region\n  #'hval: Higher limit of the valid region\n  \n  flag=TRUE\n  if ((value>=lval) && (value<=hval)){ \n    flag=FALSE }\n  return(flag)\n}\n\nis.empty <- function(d.frame){\n  flag <- FALSE\n  if (nrow(d.frame)==0){\n    flag <- TRUE\n  }\n  return(flag)\n}\n\n\n\n\n#' Transform RnBeads differential methylation analysis on the site level\n#'\n#' Use this function to transform the diffMethTable_site_cmp.csv files exported by RnBeads in to bed-formatted files that\n#' compatible with the MeinteR inputs. This transformation is valid for the differential analysis of two groups on the site level from both\n#' array-based and bifulfite sequencing data\n#'\n#' @param file.name   Full path of the diffMethTable_site_cmp.csv file\n#' @return A bed-formatted file that can be used as input of the MeinteR functions\n\n#' @export \nRnBeads2bed <- function(file.name) {\n   #RnBeads site-level differential analysis diffMethTable_site_cmp.csv \n  title.line <- readLines(file.name, n=1)  \n  if (grepl(\";\",title.line)) {\n  x <- read.csv(file = file.name, header=TRUE, sep = \";\")} else {\n    x <- read.csv(file = file.name, header=TRUE, sep = \",\")}\n    return(cbind(x[,c(\"Chromosome\", \"Start\")], x$Start + 1, x[,c(\"Strand\", \"mean.diff\")]))\n}\n",
+    "created" : 1446569526978.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "23|38|28|0|\n43|43|51|0|\n",
+    "hash" : "894212012",
+    "id" : "E2CDD480",
+    "lastKnownWriteTime" : 1469115299,
+    "path" : "~/Desktop/INAB/MeinteR/R/misc.R",
+    "project_path" : "R/misc.R",
+    "properties" : {
+        "notebook_format" : "word_document",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 0,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

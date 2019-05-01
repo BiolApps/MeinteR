@@ -1,0 +1,8 @@
+BiocCheck="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/BiocCheck"
+BiocInstaller="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/BiocInstaller"
+datasets="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/datasets"
+grDevices="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/grDevices"
+graphics="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/graphics"
+methods="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/methods"
+stats="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/stats"
+utils="/Library/Frameworks/R.framework/Versions/3.5/Resources/library/utils"

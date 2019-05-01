@@ -1,0 +1,17 @@
+{
+    "contents" : "Package: MeinteR\nType: Package\nTitle: Translating differentially methylated sites\nVersion: 2.0\nDate: 2015-08-15\nAuthor: Andigoni Malousi <andigoni@gmail.com>\nMaintainer: Andigoni Malousi <andigoni@gmail.com>\nDescription: Miscellaneous functions for the translation of genomic sites that are found to be differentially methylated.\nLicense: MIT\nLazyData: TRUE\nDepends: GenomicRanges, \n        BSgenome,\n        Biostrings,\n        XVector,\n        plyr,\n        ggplot2,\n        GenomeInfoDb,\n        S4Vectors,\n        stats4, \n        stats,\n        IRanges,\n        BiocGenerics,\n        parallel,\n        base,\n        BSgenome.Hsapiens.UCSC.hg19,\n        rtracklayer,\n        reshape2,\n        TFBSTools",
+    "created" : 1442156325267.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4072720267",
+    "id" : "A055A1BC",
+    "lastKnownWriteTime" : 1469131905,
+    "path" : "~/Desktop/INAB/MeinteR/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 0,
+    "source_on_save" : false,
+    "type" : "dcf"
+}

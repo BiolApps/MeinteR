@@ -1,0 +1,4 @@
+load("/Users/andigoni/Desktop/INAB/MeinteR/data/sample.rda")
+load("/Users/andigoni/Desktop/MeinteR/data/cpgIslands.RData")
+ls()
+cpg

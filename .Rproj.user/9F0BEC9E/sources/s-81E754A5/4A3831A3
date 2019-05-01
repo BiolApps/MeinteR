@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547884789769.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4A3831A3",
+    "lastKnownWriteTime" : 1547884802,
+    "last_content_update" : 1547884802779,
+    "path" : "~/Desktop/MeinteR/R/shapes.R",
+    "project_path" : "R/shapes.R",
+    "properties" : {
+        "cursorPosition" : "19,49",
+        "scrollLine" : "0",
+        "source_window_id" : "",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

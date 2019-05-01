@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556559564143.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B08FD6E1",
+    "lastKnownWriteTime" : 1556551547,
+    "last_content_update" : 1556551547,
+    "path" : "~/Desktop/evaluations/BRCA/TCGA_BRCA.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "140,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 13,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,434 @@
+
+###############################################
+# Evaluation - Number 1
+# Title - TCGA cancer profiles for breast cancer (BRCA)
+# Description - Abundance of G4-forming sequences among probes with high/low and differential methylation levels.
+# between matched primary solid tumor and normal samples).
+# Date: 26/7/2018
+###############################################
+
+library(dplyr)
+library(MeinteR)
+
+
+
+library(TCGAbiolinks)
+#clinical <- GDCquery_clinic(project = "TCGA-BRCA", type = "clinical patient")
+mol.subtype <- TCGAquery_subtype(tumor = "BRCA")
+
+query_meth.hg19 <- GDCquery(project= "TCGA-BRCA", 
+                            data.category = "DNA methylation", 
+                            platform = "Illumina Human Methylation 450", 
+                            sample.type = c("Primary solid Tumor","Solid Tissue Normal"),
+                            legacy = TRUE)
+# Which samples are primary solid tumor
+dataSmTP <- TCGAquery_SampleTypes(query_meth.hg19$results[[1]]$cases,"TP")
+# which samples are solid tissue normal
+dataSmNT <- TCGAquery_SampleTypes(query_meth.hg19$results[[1]]$cases,"NT")
+matched_bars <- TCGAquery_MatchedCoupledSampleTypes(query_meth.hg19$results[[1]]$cases,c("NT","TP"))
+query_meth.hg19.matched <- GDCquery(project= "TCGA-BRCA", 
+                                    data.category = "DNA methylation", 
+                                    platform = "Illumina Human Methylation 450", 
+                                    barcode = matched_bars,
+                                    sample.type = c("Primary solid Tumor","Solid Tissue Normal"),
+                                    legacy = TRUE)
+GDCdownload(query_meth.hg19.matched)
+brca.matched.183 <- GDCprepare(query_meth.hg19.matched)
+
+
+
+TCGAvisualize_meanMethylation(brca.matched.183, groupCol = "shortLetterCode",filename = NULL)
+
+#HER2 BRCA samples are more methylated than other types
+TCGAvisualize_meanMethylation(brca.matched.183, groupCol = "subtype_BRCA_Subtype_PAM50",filename = NULL)
+
+#TCGAvisualize_meanMethylation(brca.matched.183,
+#                              groupCol = "subtype_pathologic_stage",
+#                              subgroupCol = "subtype_Histology",
+#                              group.legend  = "Groups",
+#                              subgroup.legend = "Histology",
+#                              filename = "brca_mean.png")
+#β-values
+#head(data.frame(brca.matched.183@assays$data))
+beta.df <- data.frame(brca.matched.183@assays$data)
+#remove rows with NA from beta.df
+beta.df <- beta.df[,-1]
+beta.df <- beta.df[,-1]
+beta.df <- na.omit(beta.df)
+
+row.ranges <-as.data.frame(brca.matched.183@rowRanges)
+#Calculate Δβ values between NT-TP
+colnames(beta.df) <- gsub("\\.", "-",colnames(beta.df))
+beta.NT <- beta.df[,colnames(beta.df) %in% dataSmNT]
+beta.TP <- beta.df[,colnames(beta.df) %in% dataSmTP]
+mean.beta.NT <- data.frame(rowMeans(beta.NT, na.rm = TRUE))
+mean.beta.NT$probes <- rownames(mean.beta.NT)
+mean.beta.TP <- data.frame(rowMeans(beta.TP, na.rm = TRUE))
+mean.beta.TP$probes <- rownames(mean.beta.TP)
+dbeta <- merge(mean.beta.NT,mean.beta.TP, by= "probes")
+dbeta$db <- dbeta$rowMeans.beta.NT..na.rm...TRUE. - dbeta$rowMeans.beta.TP..na.rm...TRUE.
+beta.dec.30 <- subset(dbeta, dbeta$db > 0.3) # decreased methylation in TP
+beta.dec.30.1000 <- sample_n(beta.dec.30, 1000)
+beta.dec.30.1000.ranges <- merge(beta.dec.30.1000, row.ranges, by.x="probes", by.y="probeID")
+beta.dec.30.1000.r <- reorderBed(beta.dec.30.1000.ranges, 5,6,7,4)
+quads.dec.30.1000 <- findQuads(beta.dec.30.1000.r)
+
+beta.inc.30 <- subset(dbeta, dbeta$db < -0.3) # increased methylation in TP - hypermethylated
+beta.inc.30.1000 <- sample_n(beta.inc.30, 1000)
+beta.inc.30.1000.ranges <- merge(beta.inc.30.1000, row.ranges, by.x="probes", by.y="probeID")
+beta.inc.30.1000.r <- reorderBed(beta.inc.30.1000.ranges, 5,6,7,4)
+quads.inc.30.1000 <- findQuads(beta.inc.30.1000.r)
+calcP(quads.inc.30.1000[[2]]$quads,quads.dec.30.1000[[2]]$quads)
+
+
+
+library(ggplot2)
+library(lattice)
+group1.tcga <- quads.inc.30.1000[[2]]$quads
+group2.tcga<- quads.dec.30.1000[[2]]$quads
+quads.inc.dec.tcga <- c(group1.tcga,group2.tcga)
+class <- c(rep("DMS+", length(group1.tcga)), rep("DMS-",length(group2.tcga)))
+density.df <- data.frame(quads.inc.dec.tcga,class)
+density.df$quads.inc.dec.tcga[density.df$quads.inc.dec.tcga > 6] <- 6
+
+p.tcga.dif <- ggplot(density.df, aes(x = quads.inc.dec.tcga, fill = factor(class))) +
+ # geom_bar(alpha = 0.6) +
+  geom_histogram(aes(y = ..density..),position="identity", binwidth = 1, alpha = 0.7) + 
+  stat_function(fun = dnorm, aes(color = "DMS-"), size = 1, args = list(mean = mean(density.df$quads.inc.dec.tcga[density.df$class=="DMS-"]), sd = sd(density.df$quads.inc.dec.tcga[density.df$class=="DMS-"]))) +
+  stat_function(fun = dnorm, aes(color = "DMS+"), size = 1, args = list(mean = mean(density.df$quads.inc.dec.tcga[density.df$class=="DMS+"]), sd = sd(density.df$quads.inc.dec.tcga[density.df$class=="DMS+"]))) +
+  scale_color_manual(values=c("red", "blue","#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name=" ")+
+  labs( x="G-Quadruplex", y = "Density")+
+  scale_x_continuous(breaks=seq(0,6,1)) +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=30, angle=0))+
+  theme(axis.text.y=element_text(size=30, angle=90))+
+  theme(axis.title=element_text(size=30))+
+  theme(legend.text=element_text(size=20))+
+  theme(legend.position=c(0.8,0.8))+
+  theme(legend.title=element_blank()) +
+  ggtitle("TCGA-BRCA") + 
+  theme(plot.title = element_text(margin = margin(t = 10, b = -30))) +
+  theme(plot.title = element_text(hjust = 0.5, size=22))
+
+p.tcga.dif
+
+
+high <- 0.9
+low <- 0.1
+#convert probes to chromosome coordinates
+mean.NT <- merge(mean.beta.NT, row.ranges, by.x="probes", by.y="probeID")
+mean.TP <- merge(mean.beta.TP, row.ranges, by.x="probes", by.y="probeID")
+mean.TP.re <- reorderBed(mean.TP, 3,4,5,2)
+low.mean.TP <- mean.TP.re[mean.TP.re$score < low,]
+high.mean.TP <- mean.TP.re[mean.TP.re$score > high,]
+
+mean.NT.re <- reorderBed(mean.NT, 3,4,5,2)
+low.mean.NT <- mean.NT.re[mean.NT.re$score < low,]
+high.mean.NT <- mean.NT.re[mean.NT.re$score > high,]
+#select random 1000 of NT low-high
+high.mean.NT.1000 <- sample_n(high.mean.NT, 1000)
+low.mean.NT.1000 <- sample_n(low.mean.NT, 1000)
+quads.NT.high <-findQuads(high.mean.NT.1000)
+quads.NT.low <-findQuads(low.mean.NT.1000)
+calcP(quads.NT.high[[2]]$quads,quads.NT.low[[2]]$quads)
+boxplot(quads.NT.high[[2]]$quads,quads.NT.low[[2]]$quads)
+#Density plot
+
+library(ggplot2)
+library(lattice)
+group.NT.high <- quads.NT.high[[2]]$quads
+group.NT.low<- quads.NT.low[[2]]$quads
+quads.NT <- c(group.NT.high,group.NT.low)
+class <- c(rep("High methylation", length(group.NT.high)), rep("Low methylation",length(group.NT.low)))
+density.df <- data.frame(quads.NT,class)
+density.df$quads.NT[density.df$quads.NT > 6] <- 6
+
+# p.NT <-ggplot(density.df, aes(x = quads.NT, fill = factor(class))) +
+#   geom_density(alpha = 0.6) +
+#   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+#   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name=" ")+
+#   labs(title="(TCGA-BRCA-Normal)",x="G-Quadruplexes", y = "Density")+
+#   scale_x_continuous(breaks=seq(0,7,1)) +
+#   theme_bw() +
+#   theme(axis.text.x=element_text(size=20, angle=0))+
+#   theme(axis.text.y=element_text(size=20, angle=0))+
+#   theme(axis.title=element_text(size=16,face="bold"))+
+#   theme(legend.text=element_text(size=16))+
+#   theme(legend.position=c(0.8,0.8))+
+#   theme(plot.title = element_text(hjust = 0.5))
+# 
+# p.NT
+
+
+p.NT <- ggplot(density.df, aes(x = quads.NT, fill = factor(class))) +
+  # geom_bar(alpha = 0.6) +
+  geom_histogram(aes(y = ..density..),position="identity", binwidth = 1, alpha = 0.7) + 
+  stat_function(fun = dnorm, aes(color = "High methylation"), size = 1, args = list(mean = mean(density.df$quads.NT[density.df$class=="High methylation"]), sd = sd(density.df$quads.NT[density.df$class=="High methylation"]))) +
+  stat_function(fun = dnorm, aes(color = "Low methylation"), size = 1, args = list(mean = mean(density.df$quads.NT[density.df$class=="Low methylation"]), sd = sd(density.df$quads.NT[density.df$class=="Low methylation"]))) +
+  scale_color_manual(values=c("red", "blue","#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name=" ")+
+  labs( x="G-Quadruplex", y = "Density")+
+  scale_x_continuous(breaks=seq(0,6,1)) +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=30, angle=0))+
+  theme(axis.text.y=element_text(size=30, angle=90))+
+  theme(axis.title=element_text(size=30))+
+  theme(legend.text=element_text(size=20))+
+  theme(legend.position=c(0.8,0.8))+
+  theme(legend.title=element_blank()) +
+  ggtitle("TCGA-BRCA-Normal") + 
+  theme(plot.title = element_text(margin = margin(t = 10, b = -30))) +
+  theme(plot.title = element_text(hjust = 0.5, size=22))
+
+p.NT
+
+
+
+
+
+
+
+#select random 1000 of TP low-high
+high.mean.TP.1000 <- sample_n(high.mean.TP, 1000)
+low.mean.TP.1000 <- sample_n(low.mean.TP, 1000)
+quads.TP.high <-findQuads(high.mean.TP.1000)
+quads.TP.low <-findQuads(low.mean.TP.1000)
+calcP(quads.TP.high[[2]]$quads,quads.TP.low[[2]]$quads)
+boxplot(quads.TP.high[[2]]$quads,quads.TP.low[[2]]$quads)
+
+library(ggplot2)
+library(lattice)
+group.TP.high <- quads.TP.high[[2]]$quads
+group.TP.low<- quads.TP.low[[2]]$quads
+quads.TP <- c(group.TP.high,group.TP.low)
+class <- c(rep("High methylation", length(group.TP.high)), rep("Low methylation",length(group.TP.low)))
+density.df <- data.frame(quads.TP,class)
+density.df$quads.TP[density.df$quads.TP > 6] <- 6
+
+# p.TP <- ggplot(density.df, aes(x = quads.TP, fill = factor(class))) +
+#   geom_density(alpha = 0.6) +
+#   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+#   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name="Tumor DNAm")+
+#   labs(title="G-quadruplex density in TP samples (TCGA-BRCA)",x="G-Quadruplexes", y = "Density")+
+#   scale_x_continuous(breaks=seq(0,7,1)) +
+#   theme_bw() +
+#   theme(axis.text.x=element_text(size=20, angle=0))+
+#   theme(axis.text.y=element_text(size=20, angle=0))+
+#   theme(axis.title=element_text(size=16,face="bold"))+
+#   theme(legend.text=element_text(size=16))+
+#   theme(legend.position=c(0.8,0.8))+
+#   theme(plot.title = element_text(hjust = 0.5))
+# 
+
+
+p.TP <- ggplot(density.df, aes(x = quads.TP, fill = factor(class))) +
+  # geom_bar(alpha = 0.6) +
+  geom_histogram(aes(y = ..density..),position="identity", binwidth = 1, alpha = 0.7) + 
+  stat_function(fun = dnorm, aes(color = "High methylation"), size = 1, args = list(mean = mean(density.df$quads.TP[density.df$class=="High methylation"]), sd = sd(density.df$quads.TP[density.df$class=="High methylation"]))) +
+  stat_function(fun = dnorm, aes(color = "Low methylation"), size = 1, args = list(mean = mean(density.df$quads.TP[density.df$class=="Low methylation"]), sd = sd(density.df$quads.TP[density.df$class=="Low methylation"]))) +
+  scale_color_manual(values=c("red", "blue","#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name=" ")+
+  labs( x="G-Quadruplex", y = "Density")+
+  scale_x_continuous(breaks=seq(0,6,1)) +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=30, angle=0))+
+  theme(axis.text.y=element_text(size=30, angle=90))+
+  theme(axis.title=element_text(size=30))+
+  theme(legend.text=element_text(size=20))+
+  theme(legend.position=c(0.8,0.8))+
+  theme(legend.title=element_blank()) +
+  ggtitle("TCGA-BRCA-Tumor") + 
+  theme(plot.title = element_text(margin = margin(t = 10, b = -30))) +
+  theme(plot.title = element_text(hjust = 0.5, size=22))
+
+p.TP
+
+
+
+
+
+# group1 <- quads.dec.30.1000[[2]]$quads
+# group2 <- quads.inc.30.1000[[2]]$quads
+# quads.inc.dec <- c(group1,group2)
+# class <- c(rep("Low methylation", length(group1)), rep("High methylation",length(group2)))
+# beanplot(quads.inc.dec ~ class, ll = 0.00, side = "both", kernel="gaussian",
+#          xlab="p-value < 0.001", ylab="G-quadruplexes",  
+#          col = list("#8dd3c7", c("#bebada", "black")), show.names = F, axes=T)
+# #axis(1,at=c(1, 2),  labels=c("A", "B")) 
+# axis(1,at=1,  labels="Δβ-values") 
+# axis(2)
+# legend("topright", fill = c("#8dd3c7", "#bebada"),
+#        legend = c("down-methylated", "up-methylated"), box.lty=0)
+# mtext("Beanplots of TCGA-BRCA methylation levels", outer = TRUE, cex = 1.5, font=1, col=rgb(0.1,0.2,0.3,1) )
+# boxplot(quads.inc.dec ~ class, main="Box plot Db", col=rep(c("#8dd3c7", "#bebada"), 2))
+
+dev.off()
+
+row.bind.dmes$quads <- rbind(as.data.frame(quads.dec.30.1000[[2]]$quads), as.data.frame(quads.inc.30.1000[[2]]$quads))
+
+
+
+
+calcP <- function(input1, input2) {
+  if (length(input1)<200 | length(input2)<200) {
+    shap.inc <- shapiro.test(input1)
+    shap.dec <- shapiro.test(input2)
+    if (shap.inc$p.value < 0.05 | shap.dec$p.value <0.05) { # Not normal distribution
+      wilc <- suppressWarnings(wilcox.test(input1,input2))
+      message("p-value: ", round(wilc$p.value,4))
+    } else { #Normal distribution
+      ttest <- t.test(input1,input2)
+      message("p-value: ", round(ttest$p.value,4))
+    }
+  } else {
+    ttest <- t.test(input1,input2)
+    message("p-value: ", round(ttest$p.value,4))
+  }
+}
+
+
+# Analysis of GEO GSE66695 dataset
+
+library(MeinteR)
+
+gse.accession <- "GSE66695"
+annotation.file <- paste0("/Volumes/GoogleDrive/My Drive/Publications/MeinteR/Bioinformatics/evaluations/GEO_multiple_cancers/GEO/",gse.accession,"_annotation.csv")
+working.dir <- paste0("/Volumes/GoogleDrive/My Drive/Publications/MeinteR/Bioinformatics/evaluations/GEO_multiple_cancers/GEO/", gse.accession)
+name<-"BRCA"
+offset <- 100
+max.seq <- 1000
+db <- 0.3
+high <- 0.9
+low <- 0.1
+
+#Start
+geo.data <- importGEO(gse.acc=gse.accession, annotation.file=annotation.file)
+bed.data<-na.omit(reorderBed(geo.data[[1]],3,4,5,2))
+
+tumor <- merge(geo.data[[4]],geo.data[[1]], by="probes")
+tumor <- na.omit(reorderBed(tumor,4,5,6,2))
+par(mfrow = c(1, 2))
+nameStudy(paste("Tumor ", name))
+plotBeta(tumor)
+normal <- merge(geo.data[[5]],geo.data[[1]], by="probes")
+normal<-na.omit(reorderBed(normal,4,5,6,2))
+nameStudy(paste("Normal ", name))
+plotBeta(normal)
+
+nameStudy(name)
+dec <- subset(bed.data, bed.data$score < -1*db) #hypomethylated in cancer
+inc <- subset(bed.data, bed.data$score > db)  #hypermethylated in cancer
+if (nrow(dec)>max.seq) {rows.d <- max.seq} else {rows.d <- nrow(dec)}
+if (nrow(inc)>max.seq) {rows.i <- max.seq} else {rows.i <- nrow(inc)}
+message("Number of sequences with increased methylation: ", nrow(inc))
+message("Number of sequences with decreased methylation: ", nrow(dec))
+
+#### G-quadruplex
+quads.inc <- findQuads(inc[1:rows.i,], offset=offset)
+quads.dec <- findQuads(dec[1:rows.d,], offset=offset)
+message("Mean quadruplexes per sequence with increasing methylation: ",round(mean(quads.inc[[2]]$quads),3))
+message("Mean quadruplexes per sequence with decreasing methylation: ",round(mean(quads.dec[[2]]$quads),3))
+write.csv(quads.inc[[2]]$quads, file=paste0(working.dir, "/quads.inc.csv"))
+write.csv(quads.dec[[2]]$quads, file=paste0(working.dir, "/quads.dec.csv"))
+calcP(quads.inc[[2]]$quads,quads.dec[[2]]$quads)
+
+
+
+
+library(ggplot2)
+library(lattice)
+group1.geo <- quads.inc[[2]]$quads
+group2.geo<- quads.dec[[2]]$quads
+quads.inc.dec.geo <- c(group1.geo,group2.geo)
+class <- c(rep("DMS+", length(group1.geo)), rep("DMS-",length(group2.geo)))
+density.df <- data.frame(quads.inc.dec.geo,class)
+density.df$quads.inc.dec.geo[density.df$quads.inc.dec.geo > 6] <- 6
+# p.geo <- ggplot(density.df, aes(x = quads.inc.dec.geo, fill = factor(class))) +
+#   geom_density(alpha = 0.6) +
+#   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+#   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name="Differential DNAm")+
+#   labs(title="G-quadruplex density in dMeS+ and dMeS- (GEO-BRCA)",x="G-Quadruplexes", y = "Density")+
+#   scale_x_continuous(breaks=seq(0,7,1)) +
+#   theme_bw() +
+#   theme(axis.text.x=element_text(size=20, angle=0))+
+#   theme(axis.text.y=element_text(size=20, angle=0))+
+#   theme(axis.title=element_text(size=16,face="bold"))+
+#   theme(legend.text=element_text(size=16))+
+#   theme(legend.position=c(0.8,0.8))+
+#   theme(plot.title = element_text(hjust = 0.5))
+
+
+p.GEO <- ggplot(density.df, aes(x = quads.inc.dec.geo, fill = factor(class))) +
+  # geom_bar(alpha = 0.6) +
+  geom_histogram(aes(y = ..density..),position="identity", binwidth = 1, alpha = 0.7) + 
+  stat_function(fun = dnorm, aes(color = "DMS+"), size = 1, args = list(mean = mean(density.df$quads.inc.dec.geo[density.df$class=="DMS+"]), sd = sd(density.df$quads.inc.dec.geo[density.df$class=="DMS+"]))) +
+  stat_function(fun = dnorm, aes(color = "DMS-"), size = 1, args = list(mean = mean(density.df$quads.inc.dec.geo[density.df$class=="DMS-"]), sd = sd(density.df$quads.inc.dec.geo[density.df$class=="DMS-"]))) +
+  scale_color_manual(values=c("red", "blue","#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"),name=" ")+
+  labs( x="G-Quadruplex", y = "Density")+
+  scale_x_continuous(breaks=seq(0,6,1)) +
+  theme_bw() +
+  theme(axis.text.x=element_text(size=30, angle=0))+
+  theme(axis.text.y=element_text(size=30, angle=90))+
+  theme(axis.title=element_text(size=30))+
+  theme(legend.text=element_text(size=20))+
+  theme(legend.position=c(0.8,0.8))+
+  theme(legend.title=element_blank()) +
+  ggtitle("GEO-BRCA") + 
+  theme(plot.title = element_text(margin = margin(t = 10, b = -30))) +
+  theme(plot.title = element_text(hjust = 0.5, size=22))
+
+p.GEO
+
+
+
+
+
+multiplot(p.TP, p.tcga.dif, p.NT, p.geo, cols=2)
+
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}

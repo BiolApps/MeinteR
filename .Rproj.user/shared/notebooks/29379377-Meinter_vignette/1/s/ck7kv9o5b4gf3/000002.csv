@@ -1,0 +1,5 @@
+"0","tfbs <-findTFBS(bed.data=subsample.3,persim=0.8, offset=10, target=""PROMOTER"", up.tss=2000, down.tss=100, mcores = 2, tf.ID=tf.ID)
+"
+"2","Error in filterByProm(bed.data, up.tss = up.tss, down.tss = down.tss) : 
+  could not find function ""filterByProm""
+"

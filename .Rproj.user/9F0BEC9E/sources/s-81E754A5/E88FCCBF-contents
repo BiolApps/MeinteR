@@ -1,0 +1,33 @@
+library(dplyr)
+library(MeinteR)
+library(TCGAbiolinks)
+
+query <- GDCquery(project= "TCGA-BRCA", 
+                  data.category = "DNA methylation", 
+                  platform = "Illumina Human Methylation 450", 
+                  sample.type = c("Primary solid Tumor","Solid Tissue Normal"),
+                  legacy = TRUE)
+
+# Primary solid tumor samples
+Smp.TP <- TCGAquery_SampleTypes(query$results[[1]]$cases,"TP")
+# Solid normal tissue samples
+Smp.NT <- TCGAquery_SampleTypes(query$results[[1]]$cases,"NT")
+matched_bars <- TCGAquery_MatchedCoupledSampleTypes(query[[1]]$cases,c("NT","TP"))
+query.m <- GDCquery(project= "TCGA-BRCA", 
+                    data.category = "DNA methylation", 
+                    platform = "Illumina Human Methylation 450", 
+                    barcode = matched_bars,
+                    sample.type = c("Primary solid Tumor","Solid Tissue Normal"),
+                    legacy = TRUE)
+GDCdownload(query.m)
+gdc.pr <- GDCprepare(query.m)
+
+#Plot beta-value distribution
+TCGAvisualize_meanMethylation(gdc.pr, groupCol = "shortLetterCode",filename = NULL)
+
+beta.df <- data.frame(gdc.pr@assays$data)
+#remove rows with NA from beta.df
+beta.df <- beta.df[,-1]
+beta.df <- beta.df[,-1]
+beta.df <- na.omit(beta.df)
+row.ranges <-as.data.frame(gdc.pr@rowRanges)
