@@ -1,0 +1,140 @@
+---
+title: "MeinteR: Use cases"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Use Case 3: Associating genomic DMS signatures with gene expression
+
+```{r evaluation3, eval=FALSE}
+###############################################
+# Use Case 3
+# Title - Association of genomic index with gene expression in bladder cancer
+###############################################
+
+
+library("yarrr")
+library(scales)
+library(ggplot2)
+
+#-----FUNCTIONS----------------------
+evaluation3 <- function(DEX, aggr, pirate.title, logfc.low=logfc.low, logfc.high=logfc.high) {
+  options( scipen=999)
+  res.df <- vector()
+  tt <- t.test(DEX$logFC, aggr$logFC) 
+  res.df <- c(res.df, tt$p.value, mean(abs(aggr$logFC)),mean(abs(DEX$logFC)))
+  # normalized density plots
+  df1 <- data.frame(aggr$logFC, group="DMS∩DEx")
+  colnames(df1)<- c("data", "Dataset")
+  df2 <- data.frame(DEX$logFC, group="DEx")
+  colnames(df2)<- c("data", "Dataset")
+  df <- rbind(df1,df2)
+  print(
+    ggplot(df, aes(data, fill=Dataset)) +
+      geom_density(aes(y=2*(..density..)/sum(..density..)),  alpha=0.8, 
+                   position="identity", lwd=0.8) +
+      scale_y_continuous(labels=percent_format(accuracy = .1)) +
+      scale_fill_manual(values=c("#9999CC", "#66CC99"))+
+      xlab("logfc") +
+      ylab("Density") +
+      theme(
+        axis.text.x = element_text(colour="grey20",size=20,angle=0,hjust=.5,vjust=.5,face="plain"),
+        axis.text.y = element_text(colour="grey20",size=20,angle=0,hjust=1,vjust=0,face="plain"),  
+        axis.title.x = element_text(colour="grey20",size=20,angle=0,hjust=.5,vjust=0,face="plain"),
+        axis.title.y = element_text(colour="grey20",size=20,angle=90,hjust=.5,vjust=.5,face="plain"),
+        legend.title = element_text(colour="grey20",size=20,angle=0,hjust=.5,vjust=.5,face="plain"),
+        legend.text = element_text(colour="grey20",size=20,angle=0,hjust=.5,vjust=.5,face="plain"),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        legend.position = c(.95, .95),
+        legend.justification = c("right", "top"),
+        legend.box.just = "left",
+        legend.margin = margin(5, 5, 5, 5)
+      )
+  )
+  logfc.0 <- subset(aggr, abs(aggr$logFC) < logfc.low) 
+  logfc.1 <- subset(aggr, abs(aggr$logFC) >= logfc.high) 
+  res.df <- c(res.df, nrow(logfc.0),nrow(logfc.1))
+  p <- t.test(logfc.0$g.index,logfc.1$g.index)
+  res.df <- c(res.df, mean(logfc.0$g.index),mean(logfc.1$g.index), p$p.value)
+  aggr$idx.bin <- aggr$g.index < 1
+  aggr$idx.bin[aggr$idx.bin == FALSE] <- "high" 
+  aggr$idx.bin[aggr$idx.bin == TRUE] <- "low" 
+  test <- paste0("p-value= ", round(p$p.value,3))
+  pirateplot(formula = abs(logFC) ~ idx.bin,
+             point.o = .2,
+             pal = "pony",
+             data = aggr,
+             cex.lab = 2.5,
+             cex.axis = 2.5,
+             cex.names = 2.5,
+             xlab = bquote('logfc'),
+             ylab = " ")
+  
+  point.sizes <- runif(100, min = .2, max = 2) # Just for fun
+  
+  plot(abs(aggr$logFC), aggr$g.index,
+       pch = 21,
+       bg = piratepal("pony", trans = .1),
+       col = "white",
+       bty = "n",
+       cex = point.sizes,
+       cex.lab = 1.8,
+       cex.axis = 1.8,
+       cex.names = 1.8,
+       xlab = bquote('|logfc|'),
+       ylab = " ")
+  mtext("Genomic index",side=2, font=10, cex=2, line =2.5)
+  
+  grid() # Add gridlines
+  model <- lm(formula = abs(logFC) ~ g.index,
+              data = aggr)
+  abline(model,
+         col = 'black', lwd=3, lty=2)
+  summary(model)
+  
+  
+  aggr$score.bin <- aggr$score < 0 #if TRUE then DMS-
+  p <- t.test(aggr$logFC[aggr$score.bin == FALSE],aggr$logFC[aggr$score.bin == TRUE])
+  res.df <- c(res.df, p$p.value, mean(aggr$logFC[aggr$score.bin == FALSE]), mean(aggr$logFC[aggr$score.bin == TRUE]))
+  aggr$score.bin[aggr$score.bin == FALSE] <- "DMS+"
+  aggr$score.bin[aggr$score.bin == TRUE] <- "DMS-"
+  test <- paste0("p-value= ", round(p$p.value,3))
+  pirateplot(formula = logFC ~ score.bin,
+             point.o = .1,
+             pal = "xmen",
+             data = aggr,
+             cex.lab = 1.5,
+             cex.axis = 1.5,
+             cex.names = 1.5,
+             xlab="",
+             ylab = " ")
+  mtext(bquote('logfc'),side=2, font=20, cex=2, line =2)
+  res.df = data.frame(round(res.df,4))
+  abline(h=0, col="black", lwd=3, lty=2)
+  row.names(res.df) = c("p.beta", "abs(meanlogfc(merged)", "abs(meanlogfc(dex)", "lowlogfc", "highlogfc",  "mean(logfc.low$g.index)","mean(logfc.high$g.index)", "p logfc vs g.index", "t.test(hypo$logFC, hyper$logFC)", "mean(hypo$logfc)", "mean(hyper$logfc")
+}
+
+
+TCGA.DEX.BLCA <- read.csv("blca_dex.csv") #set path appropriately (vignette folder)
+TCGA.DEX.BLCA <- subset(TCGA.DEX.BLCA,!(TCGA.DEX.BLCA$logFC > quantile(TCGA.DEX.BLCA$logFC, probs=c(.005, .995))[2] | TCGA.DEX.BLCA$logFC < quantile(TCGA.DEX.BLCA$logFC, probs=c(.005, .995))[1]) ) 
+
+mtx.blca <- read.csv(file="BLCA_signature.csv", header=TRUE, stringsAsFactors = FALSE) #set path appropriately (vignette folder)
+mtx.blca <- subset(mtx.blca, abs(mtx.blca$score)>= 0.4)
+aggr.blca <- merge(mtx.blca, TCGA.DEX.BLCA, by.x="name", by.y="gene")
+aggr.blca <- subset(aggr.blca, select = -c(X.x))
+aggr.blca <- unique(aggr.blca)
+DEX <- TCGA.DEX.BLCA
+aggr <- aggr.blca
+pirate.title <-"TCGA-BLCA"
+logfc.low = 0.1
+logfc.high = 1
+
+evaluation3(DEX=DEX, aggr=aggr, pirate.title=pirate.title, logfc.low = logfc.low, logfc.high=logfc.high)
+
+```

@@ -44,7 +44,7 @@ query.m <- GDCquery(project= "TCGA-BRCA",
                             sample.type = c("Primary solid Tumor","Solid Tissue Normal"),
                             legacy = TRUE)
 
-#Download DNA methylation data (~4TB of data)
+#Download DNA methylation data (~4GB of data)
 GDCdownload(query.m)
 gdc.pr <- GDCprepare(query.m)
 
@@ -104,7 +104,7 @@ p
 
 ```{r evaluation1, eval=FALSE}
 gse.accession <- "GSE66695"
-annotation.file <- "GSE66695_annotation.csv" #Change path to annotation file appropriately
+annotation.file <- "GSE66695_annotation.csv" #Change path to annotation file appropriately (file included in the vignette folder)
 working.dir <- "UC1" # set working directory
 name<-"BRCA"
 offset <- 100
