@@ -6,7 +6,7 @@
 ##            : scatterConsTF (exported)
 ##            : plotTF (exported)
 ##            : meinter (exported)
-## Updated    : 31-01-2019
+## Updated    : 30-04-2019
 ##
 ## Title      : Find transcription factor binding sites that overlap differentially methylated sites
 #############################################################################

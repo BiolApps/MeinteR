@@ -3,7 +3,7 @@
 ## File       : shapes.R
 ## Functions  : findShapes (exported)
 ##
-## Updated    : 04-01-2019
+## Updated    : 30-04-2019
 ##
 ## Title      : Function for the detection of DNA shape features
 #######################################################################

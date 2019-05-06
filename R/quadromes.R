@@ -3,7 +3,7 @@
 ## File       : quadromes.R
 ## Functions  : findPals (exported)
 ##            : findQuads (exported)
-## Updated    : 12-01-2019
+## Updated    : 30-04-2019
 ##
 ## Title      : Functions for palindrome and G-quadruplex detection.
 #######################################################################

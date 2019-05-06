@@ -1,7 +1,7 @@
 Package: MeinteR
 Type: Package
-Title: MeinteR (MEthylation INTERpretation): Prioritizing aberrant DNA methylation using local genomic signatures 
-Description: MeinteR builds the genomic signature of differential methylated sites based on a set of transcriptional regulatory elements and prioritizes critical sites that more likely have strong influence on phenotype expression.
+Title: MeinteR (MEthylation INTERpretation): A computational method to prioritize aberrant DNA methylation using local genomic substrate 
+Description: MeinteR builds genomic signatures of differential methylated sites based on a set of transcriptional regulatory elements and prioritizes critical sites that more likely have strong influence on phenotype expression.
 Version: 0.99.0
 URL: https://github.com/andigoni/MeinteR
 Date: 2019-04-30

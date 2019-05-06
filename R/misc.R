@@ -19,7 +19,7 @@
 ##            : probesChr
 ##            : loadSeqGEO (exported)
 ##            : mval2beta
-## Updated    : 30-01-2019
+## Updated    : 30-04-2019
 ##
 ## Title      : Miscellaneous functions
 #############################################################################
