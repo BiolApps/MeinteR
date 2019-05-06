@@ -24,15 +24,19 @@ To install MeinteR and all its dependencies install and load devtools.
 First, download the binary distribution of the package, unzip it to a local folder and run the following commands:
 ```
 library(devtools)
+#Set folder of the package
 package.folder <- "~/MeinteR"
 install_local(package.folder)
 ```
-**Install from bitbucket**
+**Install from GitHub**
 
-MeinteR and its dependencies can be directly installed using the following command:
+MeinteR and its dependencies can be directly installed from GitHub using the following commands:
 ```
-devtools::install_bitbucket("andigoni/meinter", quiet=FALSE)
+library(devtools)
+devtools::install_gihub("andigoni/meinter")
 ```
+
+**Source code for use cases**
 
 [Use Case 1: Genome-wide association of G-quadruplexes with DNA methylation using TCGA/GEO breast cancer datasets](vignettes/UseCase1.Rmd)
 
@@ -45,7 +49,6 @@ devtools::install_bitbucket("andigoni/meinter", quiet=FALSE)
 **Demo run**
 
 ```
-#Demo Run on sample dataset
 library(MeinteR)
 rm(list = ls())
 #Reorder columns of sample dataset
@@ -67,12 +70,12 @@ tfbs <-
     target = "all",
     tf.ID = c("MA0107.1", "MA0098", "MA115.1", "MA0131.2")
   )
-#Find overlaps with conserved transcription factors
-ctfbs <-
-  findConservedTFBS(bed.data)
+#Find overlaps with conserved transcription factors. ~71MB gzipped file 
+#will be downloaded if local path is not set.
+ctfbs <- findConservedTFBS(bed.data)
 #Find overlaps with DNA shape features
 shapes <- findShapes(bed.data)
-#Weighting scheme
+#Feature weights
 weights = list()
 weights[["spls"]] = 1
 weights[["ctfbs"]] = 1
@@ -92,15 +95,11 @@ funList[["shapes"]] = shapes
 #Calculate genomic index
 index <- meinter(re.sample, funList, weights)
 
-
 ```
 
+**Citation**
 
-
-
-
-
----
+A. Malousi et al. "MeinteR: A computational method to prioritize aberrant DNA methylation events using local genomic substrate" (submitted)
 
 
 
