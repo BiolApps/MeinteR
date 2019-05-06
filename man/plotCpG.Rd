@@ -9,7 +9,7 @@ plotCpG(bed.data, offset = 200)
 \arguments{
 \item{bed.data}{A data frame containing input bed-formatted data}
 
-\item{offset}{Number of nucleotides expanded in each direction (default:200, min:20 max:1000)}
+\item{offset}{Number of nucleotides expanded on each side (default:200, min:20 max:1000)}
 }
 \value{
 1/ A data frame containing the G+C content (percentage of island that is C or G)

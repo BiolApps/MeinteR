@@ -1,7 +1,7 @@
 \name{TF.class}
 \alias{TF.class}
 \docType{data}
-\title{Transcription factor classes (data)
+\title{Transcription factor classes (reference data)
 }
 \description{
 Tabular file containing the number of transcription factors per class.

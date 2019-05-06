@@ -7,7 +7,7 @@
 scatterConsTF(df)
 }
 \arguments{
-\item{df}{The data frame exported by the `findConservedTFBS` function}
+\item{df}{A data frame exported by the `findConservedTFBS` function}
 }
 \description{
 Generates a scatterplot of the results exported by the `findConservedTFBS` function. The scatterplot

@@ -1,7 +1,7 @@
 \name{test.data}
 \alias{test.data}
 \docType{data}
-\title{Test dataset with chromosomal position of the methylated sites and the corresponding delta beta values (data)
+\title{Test dataset with chromosomal position of the methylated sites and the corresponding delta beta values (sample data)
 }
 \description{
 A valid and well-formatted sample dataset containing 401 differentially methylated data with |delta beta-values|>0.3.

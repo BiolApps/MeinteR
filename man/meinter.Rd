@@ -13,7 +13,7 @@ meinter(bed.data, funList, weights)
 the genomic index. Valid element names of the list: `spls`-`findSpliceSites`, `altss`-`findAltSplicing`,
 `ctfbs`-`findConservedTFBS`, `tfbs`-`findTFBS`, `pals`-`findPals`, `quads`-`findQuads`, `shapes`-`findShapes`}
 
-\item{weights}{A list of positive values corresponding to feature weights [0,10]. Same list elements with
+\item{weights}{A list of positive values corresponding to feature weights [0,10]. Same elements with
 `funList` list}
 }
 \value{

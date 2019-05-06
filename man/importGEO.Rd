@@ -16,7 +16,7 @@ sample grouping information}
 1/ A bed-formatted data frame with the chromosomal coordinates and of each methylation probe and
 the corresponding delta-beta values between the two groups
 
-2/ Beta values of each sample listed in the annotation file
+2/ Beta values at CpG sites included in all sample listed in the annotation file
 
 3/ Annotation data frame
 

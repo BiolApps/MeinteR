@@ -12,9 +12,9 @@ reorderBed(input.data, chr.col, start.col, end.col, score.col,
 
 \item{chr.col}{Column number containing the chromosome name}
 
-\item{start.col}{Column number containing the chromosome's start position}
+\item{start.col}{Column number containing the chromosome start position}
 
-\item{end.col}{Column number containing the chromosome's end position}
+\item{end.col}{Column number containing the chromosome end position}
 
 \item{score.col}{Column number containing the methylation score values either beta or delta-beta}
 

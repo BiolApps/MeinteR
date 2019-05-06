@@ -7,7 +7,7 @@
 nameStudy(study.name)
 }
 \arguments{
-\item{study.name}{A string corresponding to the name of the study}
+\item{study.name}{A string corresponding to a study name}
 }
 \value{
 The name of the study

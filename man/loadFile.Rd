@@ -10,7 +10,7 @@ loadFile(FH)
 \item{FH}{Full path of the tabular methylation data}
 }
 \value{
-df   A data frame with the tabular methylation data
+df   A data frame with DNA methylation data
 }
 \description{
 Loads tabular files containing methylation data. The function checks the delimiter and validates the order

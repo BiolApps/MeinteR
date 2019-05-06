@@ -10,7 +10,7 @@ isEmptyDF(df)
 \item{df}{The input data frame}
 }
 \value{
-TRUE/FALSE (TRUE is the data frame is empty)
+TRUE/FALSE (TRUE if data frame is empty)
 }
 \description{
 Checks if a data frame has no values

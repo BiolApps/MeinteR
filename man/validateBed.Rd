@@ -17,5 +17,5 @@ A well-formatted data frame
 \description{
 Validates input methylation data. Checks the presence of the chr, start, end, score columns.
 If column `strand` is not set then `+` strand is assumed.
-Cleans rows with empty cells and sets numeric format to the start, end and score columns.
+Cleans rows containing empty cells and sets numeric format to the start, end and score columns.
 }

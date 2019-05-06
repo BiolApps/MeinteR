@@ -17,5 +17,5 @@ filterByProm(input.data, up.tss, down.tss)
 A data frame with the CpG sites located in promoter regions
 }
 \description{
-Selects genomic coordinates included in promoters based on the UCSC hg19 gene coordinates.
+Selects genomic coordinates than are included in promoters based on the UCSC hg19 gene coordinates.
 }

@@ -1,7 +1,7 @@
 \name{cpgIslands}
 \alias{cpgIslands}
 \docType{data}
-\title{CpG islands (data)
+\title{CpG islands (reference data)
 }
 \description{
 List of 27,718 human CpG islands with their corresponding GC-content and observed/expected ratio in chromosomes chr1..22,X,Y (hg19). The list is obtained from the cpgIslandExt table of UCSC Table Browser. 

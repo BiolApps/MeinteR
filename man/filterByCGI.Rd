@@ -13,5 +13,5 @@ filterByCGI(input.data)
 A data frame with the CpG sites located in CpG islands
 }
 \description{
-Selects genomic coordinates included in CpG islands, using the cpgIslands dataset.
+Selects genomic coordinates that belong to CpG islands, using the cpgIslands dataset.
 }

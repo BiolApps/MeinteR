@@ -9,7 +9,7 @@ bed2Seq(bedline, offset)
 \arguments{
 \item{bedline}{Valid bed-formatted data frame}
 
-\item{offset}{Number of nucleotides expanded in each direction ([1,1000])}
+\item{offset}{Number of nucleotides expanded on each side ([1,1000])}
 }
 \value{
 A DNAStringset containing the sequences in hg19 genome assembly

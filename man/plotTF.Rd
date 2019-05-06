@@ -9,7 +9,7 @@ plotTF(df, topTF = 10)
 \arguments{
 \item{df}{The data frame exported by the `findTFBS` function}
 
-\item{topTF}{Integer corresponding to the  number of the most frequent trascription
+\item{topTF}{Integer that sets the number of the most frequent trascription
 factors to be displayed (default:10)}
 }
 \value{

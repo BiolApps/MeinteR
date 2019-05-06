@@ -1,7 +1,7 @@
 \name{sample}
 \alias{sample}
 \docType{data}
-\title{Sample DNA methylation dataset (data)
+\title{Sample DNA methylation dataset (sample data)
 }
 \description{
 A data frame with 5840 methylation sites containing the chromosomal position of the methylation sites and the corresponding delta beta values.

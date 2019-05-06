@@ -10,7 +10,7 @@ findPals(bed.data, offset = 10, min.arm = 5, max.loop = 5,
 \arguments{
 \item{bed.data}{A data frame containing input bed-formatted data}
 
-\item{offset}{Number of nucleotides expanded in each direction (default:10, max:200)}
+\item{offset}{Number of nucleotides expanded on each side (default:10, max:200)}
 
 \item{min.arm}{Minimum length of each arm (default:5)}
 

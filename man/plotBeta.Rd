@@ -3,7 +3,7 @@
 \name{plotBeta}
 \alias{plotBeta}
 \title{Plot scores of the input data
-Generates a density plot of the score values listed in the input dataset.}
+Generates a density plot of the score values.}
 \usage{
 plotBeta(bed.data)
 }
@@ -12,5 +12,5 @@ plotBeta(bed.data)
 }
 \description{
 Plot scores of the input data
-Generates a density plot of the score values listed in the input dataset.
+Generates a density plot of the score values.
 }

@@ -12,7 +12,7 @@ findTFBS(bed.data, persim = 0.8, offset = 12, target = "PROMOTER",
 
 \item{persim}{Minimum similarity with transcription factors consensus matrices (default:0.8, range in [0,1])}
 
-\item{offset}{Number of nucleotides expanded in each direction (default:12, min:5, max:100)}
+\item{offset}{Number of nucleotides expanded on each side (default:12, min:5, max:100)}
 
 \item{target}{Search for transcription factor binding sites on specific regions.
 `PROMOTER`: selects sites located in promoter regions, `CGI`: selects sites in CpG islands,

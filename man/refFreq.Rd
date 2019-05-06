@@ -1,7 +1,7 @@
 \name{refFreq}
 \alias{refFreq}
 \docType{data}
-\title{Human transcription factor frequency (data)
+\title{Human transcription factor frequency (reference data)
 }
 \description{
 Frequency of the human conserved transcription factors in the reference genome. The frequency of each 

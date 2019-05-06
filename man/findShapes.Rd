@@ -9,7 +9,7 @@ findShapes(bed.data, offset = 50)
 \arguments{
 \item{bed.data}{A data frame containing input bed-formatted data}
 
-\item{offset}{Number of nucleotides expanded in each direction (default:50, max:200)}
+\item{offset}{Number of nucleotides expanded on each side (default:50, max:200)}
 }
 \value{
 1/ p-value of the MGW in the unmethylated/methylated CpG context for each sequence
