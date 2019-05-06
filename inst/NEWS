@@ -1,1 +1,1 @@
-MeinteR is an R package for the interpretation of DNA methylation data exported by microarray and next-generation sequencing platforms.
+MeinteR is an R package that can be used to prioritize aberrant DNA methylation events that are identified in microarray and next-generation sequencing platforms.

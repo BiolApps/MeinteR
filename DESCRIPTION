@@ -14,4 +14,4 @@ biocViews: DNAMethylation, AlternativeSplicing, DifferentialMethylation, GeneReg
 Imports: GenomicRanges, BSgenome.Hsapiens.UCSC.hg19, ggplot2, dplyr, plyr, rtracklayer, BSgenome, tidyverse, XVector, GenomeInfoDb, S4Vectors, stats4, stats, IRanges, BiocGenerics, parallel, reshape2, TFBSTools, JASPAR2018, graphics, utils, grDevices, TxDb.Hsapiens.UCSC.hg19.knownGene, GenomicFeatures, GEOquery, Biobase
 Author: Andigoni Malousi <andigoni@auth.gr>
 Maintainer: Andigoni Malousi <andigoni@auth.gr>
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
