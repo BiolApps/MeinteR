@@ -1,16 +1,9 @@
 ---
-title: 'MeinteR: Prioritizing differentially methylated CpGs using local genomic signatures'
-date: "2 May 2019"
+title: 'MeinteR: A computational method to prioritize aberrant DNA methylation using local genomic substrate'
+date: '6 May 2019'
 bibliography: Meinter.bib
 csl: bibl.csl
 output:
-  pdf_document:
-    fig_caption: yes
-    fig_height: 3
-    fig_width: 4
-    highlight: tango
-    number_sections: yes
-    toc: yes
   html_document:
     highlight: espresso
     theme: spacelab
@@ -18,6 +11,13 @@ output:
     fig_caption: yes
     keep_md: yes
     number_sections: yes
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    highlight: tango
+    number_sections: yes
+    toc: yes
   word_document:
     fig_caption: yes
 vignette: >
@@ -28,14 +28,13 @@ vignette: >
 
 \section{Overview}
 
-MeinteR (MEthylation INTERpretation) is an R package that identifies critical differentially methylated sites (DMS), based on the following hypothesis: Critical methylation-mediated changes are more likely to occur in genomic regions that are enriched in cis-acting regulatory elements than in "genomic deserts”. With MeinteR we first calculate the abundance of co-localized elements, such as transcription factor binding sites, tentative splice sites, and other DNA features, such as G-quadruplexes and palindromes, that potentially lead to distinct DNA conformational features, and then we rank them with respect to their putative methylation impact.
-MeinteR supports the most widely-used, single-base resolution assays, including Illumina’s BeadChip HumanMethylation27, HumanMethylation450 and MethylationEPIC arrays, whole genome, reduced representation and targeted bisulfite sequencing. The input data are either tabular files containing DMS coordinates of human genome (hg19 assembly) or array-based and sequencing data that can be directly imported from the Gene Expression Omnibus (GEO) repository.
+MeinteR (MEthylation INTERpretation) is an R package that identifies critical differentially methylated sites (DMS), based on the following hypothesis: Critical methylation-mediated changes are more likely to occur in genomic regions that are enriched in cis-acting regulatory elements than in "genomic deserts”. With MeinteR we first calculate the abundance of co-localized elements, such as transcription factor binding sites, tentative splice sites, and other DNA features, such as G-quadruplexes and palindromes, that potentially lead to distinct DNA conformational features, and then we rank them with respect to their putative methylation impact. MeinteR supports the most widely-used, single-base resolution assays, including Illumina’s BeadChip HumanMethylation27, HumanMethylation450 and MethylationEPIC arrays, whole genome, reduced representation and targeted bisulfite sequencing. The input data are either tabular files containing DMS coordinates of human genome (hg19 assembly) or array-based and sequencing data that can be directly imported from the Gene Expression Omnibus (GEO) repository.
 \subsection{Installation}
 To download and install MeinteR and its dependencies, you need to install `devtools` and then run the following R commands:
 
 ```
 library(devtools)
-devtools::install_github("andigoni/meinter", quiet=TRUE)
+devtools::install_github("andigoni/meinter")
 ```
 Alternatively, download the binary installation file, unzip it to a folder e.g. `~/MeinteR` and run the following commands:
 ```
@@ -58,8 +57,8 @@ First, we set a title for our study by using the `nameStudy` function:
 ```r
 nameStudy(study.name="MyProj")
 ```
-The `study.name` will be used in the generated plot legends. 
-Second, we set an analysis folder with read-write access rights e.g.:
+The `study.name` will be shown in the produced plots. 
+Second, we set the analysis folder with read-write access rights e.g.:
 
 ```r
 project.dir <- "~/meinter_dir"
@@ -71,41 +70,40 @@ MeinteR's core functions are applied on bed-formatted files containing the follo
 
 __Chr__: Name of the chromosome (e.g. chr3)
 
-__Start__: DMS start coordinate (hg19 assembly)
+__Start__: Start coordinate (hg19 assembly)
 
-__End__: DMS end coordinate (hg19 assembly)
+__End__: End coordinate (hg19 assembly)
 
 __Score__: Difference of methylation levels ranging between -1 and 1
 
-__Strand__: Strand of the DMS. Either "." (=no strand) or "+" or "-"
+__Strand__: DNA strand. Either "." (=no strand) or "+" or "-"
 
-The `Score` field of the input dataset may correspond to the `Delta-beta` value of each DMS i.e. the difference of the methylation levels in two groups of data, for example normal/disease samples or pre-, post-treatment conditions of a sample set etc.   
+The `Score` field of the input dataset may correspond to the `delta-beta` value of each DMS i.e. the difference of the methylation levels in two groups of data, for example normal/disease samples or pre-, post-treatment conditions of a sample set etc.   
 
-In the following, we demostrate the functionalities on a sample dataset assigned to variable `sample`. The `sample` dataset is automatically loaded in the workspace and can be used for demostration.
-
+In the following, we demostrate the functionalities on a sample dataset assigned to variable `sample`. The `sample` dataset is automatically loaded in the workspace and can be used for demostration purposes.
 
 ```r
 head(sample)
 ```
 
-The `sample` dataset contains the coordinates and `delta-beta` values for a set of 5,840 CpG sites. The column names of this dataset are not consistent with formatting rules of the input data, so we need to reorder the misplaced columns using the `reorderBed` function:
+The `sample` dataset contains the coordinates and `delta-beta` values for a set of 5,840 CpG sites. The column names are not consistent with formatting rules of the input data, so we need to reorder the misplaced columns using the `reorderBed` function:
 
 ```r
 re.sample = reorderBed(sample,1,2,3,5,4) 
 head(re.sample)
 ```
-Columns 4 and 5 in the above example will change position. In addition, all columns will be renamed, appropriately. 
+Columns 4 and 5 in the above example will change position. In addition, all columns will be renamed, appropriately.
 \subsubsection{Import local data}
 To work on your own data, load the tabular file by setting the column separator (`sep`) and heading (`header`) parameters appropriately. For example,
 
 ```r
 input.data <- read.csv(file.path(project.dir, "my_data.csv"), sep=",", header = T)
 ```
-where `my_data.csv` in this example is a comma-delimited file with a header in the first line. Additional columns in the input data will be ignored. For demostration purposes MeinteR provides a well-formatted dataset loaded in the workspace called `test.data` that contains 401 DMS with `|delta-beta|>=0.3'.
+where `my_data.csv` in this example is a comma-delimited file including a header line. Additional columns in the input data will be ignored. MeinteR also provides a well-formatted dataset loaded in the workspace called `test.data` that contains 401 DMS with `|delta-beta|>=0.3'.
 
 \subsubsection{Import data from GEO}
 
-MeinteR supports analyses of GEO data series from microarray and next-generation sequencing platforms. In both cases, MeinteR will automatically fetch data series based on the GSE accession number. A data series usually contains multiple samples analyzed in the same or multiple platforms. MeinteR imports data from a data series that contains two groups of samples analysed in the same platform according to a user-defined annotation file. The annotation file is a comma-delimited file with two columns: Column `sample` lists the GSM accession numbers that are needed for the analyses and are part of the data series and the `status` column lists the class of each sample. For example, to import sample data of the GSE37362 series we must create an annotation file that has the following form:
+MeinteR supports analyses of GEO data series from microarray and next-generation sequencing platforms. In both cases, MeinteR will automatically fetch data series based on the accession number of the GEO data series. A data series usually contains  moew than one samples analyzed by a unique or multiple platforms. MeinteR imports data from a data series that contains two groups of samples analysed by the same platform according to a user-defined annotation file. The annotation file is a comma-delimited file with two columns: Column `sample` lists the GSM accession numbers that are included in the data series and the `status` column lists the class of each sample. For example, to import sample data of the GSE37362 series we must create an annotation file that has the following form:
 ```
 sample,status
 GSM916781,WT
@@ -116,7 +114,7 @@ GSM916804,Mutant
 GSM916805,Mutant
 ```
 
-The `status` column must list only two groups of samples e.g. WT, Mutant. The analysis will be performed on the samples listed in the annotation file. Samples included in the data series, but not in the annotation file, will be ignored. MeinteR will automatically identify the platform will fetch the corresponding sample data. In case of array-based data, the probes will be mapped to the hg19 genomic coordinates and a bed-formatted file will be generated conforming with the formatting rules of the input data. The delta-beta values are automatically calculated by subtracting the mean beta values of the two groups. To import a GEO data series use the function `importGEO` as follows:
+The `status` column must list only two groups of samples e.g. WT/Mutant, pre-treatment/post-treatment etc. The analysis will be performed on the samples listed in the annotation file. Samples included in the data series, but not in the annotation file, will be ignored. MeinteR will automatically identify the platform and will fetch the corresponding sample data. In case of array-based data, the probes will be mapped to the hg19 genomic coordinates and a bed-formatted file will be generated conforming with the formatting rules of the input data. The delta-beta values will be automatically calculated by subtracting the mean beta values of the two groups. To import a GEO data series use the function `importGEO` as follows:
 
 ```r
 fp <- file.path(project.dir, "GSE37362_annotation.csv")
@@ -139,9 +137,9 @@ subsample.3 <- re.sample[abs(re.sample$score) >= 0.60,]
 \section{Core functions}
 MeinteR offers a set of core functions that investigate the presence of the following methylation-mediated regulatory features: 
 
-__Transcription factors__: There are two functions that examine the effect of methylation on the binding affinity of a) human transcription factors, and b) conserved human/mouse/rat transcription factors. 
+__Transcription factors__: Two functions are implemented that examine the effect of methylation on the binding affinity of a) human transcription factors, and b) conserved human/mouse/rat transcription factors. 
 
-__Splice sites and alternative splicing events__: Splicing regulation is analysed by two functions: a) A function that identifies potential 5' and 3' splice sites in the DMS proximal regions, and b) a function that searches for alternative splicing events overlapping our DMS data.
+__Splice sites and alternative splicing events__: Splicing regulation is analysed by two functions: a) A function that identifies potential 5' and 3' splice sites in the DMS proximal regions, and b) a function that searches for known alternative splicing events overlapping our DMS data.
 
 __Symmetry elements/Palindromes__: With this function DMS are examined with respect to the presence of palindromic regions in a user-defined region centered at the DMS.
 
@@ -152,7 +150,7 @@ __DNA shapes__: This function quantifies the effect of DNA methylation on four D
 
 \subsection{Detection of transcription factor binding sites}
 \subsubsection{JASPAR transcription factor binding sites}
-Function `findTFBS` identifies potential binding sites of human transcription factors in a region of `2*offset` nucleotides centered at the DMS, where offset defines the sequence length on each side and `persim` sets the similarity threshold for considering a trascription factor as candidate for binding. The list of transcription factors, on both strands, is extracted from the JASPAR 2018 database [@khan_jaspar_2018] and processed using `TFBSTools` [@tan_tfbstools_2016]. By default, MeinteR reserves the maximum number of available cores. Still, for large datasets `findTFBS` is time-consuming. In this case, consider shortening the list of target transcription factors using the `td.ID` parameter and/or descreasing the number of DMS to those overlapping with promoters or CpG islands, using the `target` parameter. For example, to identify a list of transcription factor binding sites on `subsample.3` run:
+`findTFBS` identifies potential binding sites of human transcription factors in a region of `2*offset` nucleotides centered at the DMS, where offset defines the sequence length on each side and `persim` sets the similarity threshold for considering a trascription factor as candidate for binding. The list of transcription factors, on both strands, is extracted from the JASPAR 2018 database [@khan_jaspar_2018] and processed using `TFBSTools` [@tan_tfbstools_2016]. By default, MeinteR reserves the maximum number of available cores. Still, for large datasets `findTFBS` is time-consuming. In such case, consider shortening the list of target transcription factors using the `td.ID` parameter and/or descreasing the number of DMS to those overlapping with promoters or CpG islands, using the `target` parameter. For example, to identify a list of transcription factor binding sites on `subsample.3` run:
 
 
 ```r
@@ -161,7 +159,7 @@ tf.ID = c("MA0003.1", "MA0019.1", "MA0004.1", "MA0036.3", "MA0037.3")
 tfbs <-findTFBS(bed.data=subsample.3,persim=0.8, offset=10, target="PROMOTER", 
                 up.tss=2000, down.tss=100, mcores = 2, tf.ID=tf.ID)
 ```
-`findTFBS` returns transcription factors, inluded in the `tf.ID` list, the binding consensus of which resembles at least 80% with the DMS expanded by 10bp on each side. The analysis is performed on DMS located in promoters (2000bp upstream and 100bp downstream TSS). `tfbs` is a list of two data frames. The first data frame `tfbs[[1]]` contains all the details of each transcription factor found at each DMS and `tfbs[[2]]` summarizes the number of transcription factors per DMS. `plotTF` function gets as input the `tfbs[[1]]` data frame and visualises the most frequent transcription factors that potentially bind to DMS regions.
+In the above example, `findTFBS` will return transcription factors that are inluded in the `tf.ID` list as well as the binding sequence that resembles at least 80% with the DMS expanded by 10bp on each side. The analysis is performed on DMS located in promoters (2000bp upstream and 100bp downstream TSS). `tfbs` is a list of two data frames. The first data frame `tfbs[[1]]` contains all the details of each transcription factor found at each DMS and `tfbs[[2]]` summarizes the number of transcription factors per DMS. `plotTF` function gets as input the `tfbs[[1]]` data frame and visualises the most frequent transcription factors that potentially bind to DMS regions.
 
 ```r
 plotTF(tfbs[[1]], topTF=10) #topTF:Number of most frequent transcription factors
@@ -169,19 +167,18 @@ plotTF(tfbs[[1]], topTF=10) #topTF:Number of most frequent transcription factors
 
 `plotTF` returns a list of three plots (two bar charts and a scatter plot): The first bar chart overlays the total number of binding sites for each JASPAR transcription factor and the number of sequences containing at least one binding site (Figure 1). The second bar chart sums the number of binding sites per transcription factor class (Figure 2). Finally, the scatter plot combines the number of transcription factors per class that are identified in our dataset as compared with the JASPAR2018 number of transcription factors in each class (Figure 3).
 
-![Figure 1: Most frequent transcription factors with putative binding sites on the DMS-containing sequences.](figs/figure1.png){width=60%}
+![Most frequent transcription factors with putative binding sites on the DMS-containing sequences.](figs/figure1.png){width=60%}
 
-![Figure 2: Classes of transcription factors with putative binding sites on the DMS-containing sequences.](figs/figure2.png){width=60%}
+![Classes of transcription factors with putative binding sites on the DMS-containing sequences.](figs/figure2.png){width=60%}
 
 
 
-![Figure 3: Scatter plot of the transcription factors in our dataset (Observed) vs. the total number of transcription factors in each class according to JASPAR108 database (Expected).](figs/figure8.png){width=70%}
+![Scatter plot of the transcription factors in our dataset (Observed) vs. the total number of transcription factors in each class according to JASPAR108 database (Expected).](figs/figure8.png){width=70%}
 
 
 \subsubsection{Conserved Human/Mouse/Rat transcription factor binding sites}
 The function `findConservedTFBS` enables the detection of differentially methylated sites overlapping conserved transcription factor binding sites in the human/mouse/rat alignment. The score and threshold are computed using the Transfac Matrix Database (v7.0) available through UCSC Table Browser. The data are purely computational, and as such, not all binding sites listed here are biologically functional binding sites.
 `findConservedTFBS` will either fetch the transcription factor binding sites from UCSC or load a local copy of the file. To speed up the analysis it is advisable to download the `tfbsConsSites.txt.gz` file from http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/ and set the local path of this file to the `known.conserved.tfbs.file` argument of the `findConservedTFBS` function.
-
 
 
 ```r
@@ -195,7 +192,7 @@ The function `findConservedTFBS` returns a list of three data frames. The first 
 scatterConsTF(ctfbs[[2]])
 ```
 
-![Figure 4: Scatterplot of the conserved transcription factors and their relative frequency in the reference genomes.](figs/figure3.png){width=60%}
+![Scatterplot of the conserved transcription factors and their relative frequency in the reference genomes.](figs/figure3.png){width=60%}
 
 The third data frame lists the number of conserved transcription factors that overlap with each DMS.
 \subsection{Detection of splice sites and alternative splicing events}
@@ -205,7 +202,7 @@ To detect the presence of 5' and 3' splice sites, MeinteR employs the Shapiro an
 ```r
 ss <- findSpliceSites(bed.data=subsample.3, persim=0.8, offset= 10)
 ```
-`ss` is a list of two data frames, one containing the number of splice sites per sequence, and the second, more verbose, data frame containing the relative coordinates, type and score of all splice sites, as shown below: 
+`ss` is a list of two data frames, one containing the number of splice sites per sequence, and the second is a data frame containing the relative coordinates, type and score of all splice sites, as shown below: 
 
 ```r
 head(ss[[1]])
@@ -218,7 +215,7 @@ head(ss[[2]])
 ```r
 altss <- findAltSplicing(subsample.3)
 ```
-`findAltSplicing` fetches known alternative splicing events from UCSC Table Browser (needs internet connection) and exports three data frames: A summary and more detailed reports of the number and frequencies of DMS co-localized with the alternative splicing events, as well as an overlayed bar plot summarizing the distribution of the alternative splicing events in the reference genome and the input data (Figure 5).
+`findAltSplicing` fetches known alternative splicing events from UCSC Table Browser (needs internet connection) and exports three data frames: 1) A summary report, 2) a detailed report listing the number and frequencies of DMS co-localized with the alternative splicing events, and 3) an overlayed bar plot summarizing the distribution of the alternative splicing events in the reference genome and the input data (Figure 5).
 
 ```r
 head(altss[[1]])
@@ -227,7 +224,7 @@ head(altss[[3]])
 altss[[4]] #Plot alternative splicing events
 ```
 
-![Figure 5: Distribution of methylation data to different alternative splicing events.](figs/figure4.png){width=60%}
+![Distribution of methylation data to different alternative splicing events.](figs/figure4.png){width=60%}
 
 
 \subsection{Symmetry elements - Palindromes}
@@ -256,24 +253,24 @@ quads[[1]] # G4 locus information for each sequence
 quads[[2]] # G4 on/neighboring input data
 quads[[3]] # Number of G4 per sequence
 ```
-The arguments of `findQuads` are the bed-formatted data together with the sequence offset (offset<=1000nt) and exports a list of three data frames.  
+The arguments of `findQuads` are bed-formatted data together with the sequence offset and the function exports a list of three data frames.  
 
 \subsection{Other DNA structures }
-`findShapes` is a function that enables the detection of DNA shape alterations caused by DNA methylation. Given a set of DMS, `findShapes` determines the conformational changes, based on the `methyl-DNAshape` [@RaoSystematicpredictionDNA2018]. The function gets as input the bed-formatted dataset `bed.data` and the `offset` i.e. the expansion of sequence neighboring DMS on each side. The output is a list of four vectors containing the p-value of the helix twist, minor groove width, propeller twist, and roll in the unmethylated and methylated context. [@ChiuDNAshapeRBioconductorpackage2016].
+`findShapes` is a function that enables the detection of DNA shape alterations caused by DNA methylation. Given a set of DMS, `findShapes` determines the conformational changes, based on the `methyl-DNAshape` [@RaoSystematicpredictionDNA2018]. The function gets as input a bed-formatted dataset `bed.data` and the `offset`. The output is a list of four vectors containing the p-value of the helix twist, minor groove width, propeller twist, and roll in the unmethylated and methylated context. [@ChiuDNAshapeRBioconductorpackage2016].
 
 ```r
 #Detect DNA shapes in the 100nt region flanking DMS in the re.sample data
 shapes <- findShapes(bed.data=subsample.3, offset=100)
 ```
-In addition, `findShapes` returns a multi-panel plot and four data frames with the distribution of each DNA feature in the unmethylated and methylated context (more on the function's help page).
+In addition, `findShapes` function returns a multi-panel plot and four data frames with the distribution of each DNA feature in the unmethylated and methylated context (more on the function's help page).
 
 Figure 6 illustrates the mean values of the minor groove width in case of unmethylated and methylated DMS of the `subsample.3` dataset. Similar plots are generated for the other DNA shape features. For CpGs that are differentially methylated, `findShapes` gives insights on how DNA methylation induce conformational changes in a DNA sequence. 
 
-![Figure 6: Changes introduced to the minor groove width in the `sample` dataset.](figs/figure7.png){width=80%}
+![Changes introduced to the minor groove width in the `sample` dataset.](figs/figure7.png){width=80%}
 
 \section{Genomic signatures and ranking}
 
-In the final step, MeinteR builds the genomic signature of each DMS using the `meinter` function. `meinter` gets as input a) the results (all of subset) of functions `findAltSplicing`, `findConservedTFBS`, `findPals`, `findQuads`, `findShapes`, `findSpliceSites` and `findTFBS`, and b) a list of the relative weights. It then builds a matrix with the weighted frequencies of each genomic feature per DMS and calculates the genomic index of each position. For example: 
+In the final step, MeinteR builds genomic signatures of the DMS using the `meinter` function. `meinter` gets as input a) the results (all of subset) of functions `findAltSplicing`, `findConservedTFBS`, `findPals`, `findQuads`, `findShapes`, `findSpliceSites` and `findTFBS`, and b) a list of the relative weights. Then it builds a matrix with the weighted frequencies of each genomic feature per DMS and calculates the genomic index of each position. For example: 
 
 ```r
 #Calculate genomic index
@@ -299,9 +296,8 @@ head(index) # Highly ranked DMS
 `index` contains the genomic index of each DMS in descending order.
 
 \section{Supplementary functions}
-MeinteR incorporates also a set of supplementary functions: 
 \subsection{GC/CpG content}
-The input methylation data can be examined with respect to the presence of neighboring CpG-dense regions, CpG islands, using the `plotCpG` function. `plotCpG` generates density plots of: a) GC-content i.e. the sum of the C and G occurrences in the DNA sequence divided by the total sequence length, and b) the `Observed/Expected` CpG ratio, where `observed` corresponds to the number of CpGs i.e. the number of CpG dinucleotides in the DNA sequence, and `Expected` is the number of Cs multiplied by the number of Gs divided by the total sequence length (Figure 7). The function also returns a data frame with the corresponing GC-content and observed/expected ratios of the input data. 
+The input methylation data can be examined with respect to the presence of neighboring CpG-dense regions, CpG islands, using the `plotCpG` function. `plotCpG` generates density plots of: a) GC-content i.e. the sum of the C and G occurrences in the DNA sequence divided by the total sequence length, and b) the `Observed/Expected` CpG ratio, where `observed` corresponds to the number of CpGs i.e. the number of CpG dinucleotides in the DNA sequence, and `Expected` is the number of Cs multiplied by the number of Gs divided by the total sequence length (Figure 7). The function also returns a data frame with the corresponding GC-content and observed/expected ratios of the input data. 
 
 ```r
 dev.off() #close any open plot device
@@ -309,10 +305,10 @@ res <- plotCpG(bed.data=re.sample, offset=100)
 ```
 `plotCpG` gets as input the bed-formatted dataset and the `offset` of the sequence centered to the DMS. 
 
-![Figure 7: Density plots of the GC-content and the `Observed/Expected` CpG ratio of our data (Group data) compared with the CpG islands of the human genome (CpG islands). N is the number of the examined sequences. OFFSET is the expansion of the region length or each side of the methylation site.](figs/figure6.jpg)
+![Density plots of the GC-content and the `Observed/Expected` CpG ratio of our data (Group data) compared with the CpG islands of the human genome (CpG islands). N is the number of the examined sequences. OFFSET is the expansion of the region length on each side of the methylation site.](figs/figure6.jpg)
 
 \subsection{Plot distribution of the methylation levels}
-The density plot of the input data can be visualized using the `plotBeta` function. `plotBeta` gets the `score` column of the input data and plots the density using a Gaussian kernel. The `score` column that can be either beta or delta-beta values.
+The density plot of the input data can be visualized using the `plotBeta` function. `plotBeta` gets the `score` column of the input data and plots the density using a Gaussian kernel. The `score` column can be either beta or delta-beta values.
 
 
 ```r
@@ -321,7 +317,7 @@ plotBeta(bed.data=re.sample)
 
 \section{Working with real data}
 \subsection{Example with Illumina HumanMethylation450K data (GSE37362)}
-In the following example, we demostrate the functionalities of MeinteR on a real dataset. We use data from the data series GSE37362 that contains HumanMethylation450K methylation profiles of 31 diffuse large B-cell lymphoma, classified in two groups depending on whether TET2 is mutated. Briefly, we start by fetching methylation data from GEO using the `importGEO` function and, subsequently, calculate the mean beta-values for each group and the delta-beta values for each probe. `importGEO` exports a bed-formatted data frame, where each probe is transformed into the corresponding hg19 genomic coordinate. In case of unresponsive attempts to download GEO data series or download with warnings, try again to fetch data with the same scripts.
+In the following example, we demostrate the functionalities of MeinteR on a real dataset. We use data from the GSE37362 data series that contains HumanMethylation450K methylation profiles of 31 diffuse large B-cell lymphoma, classified in two groups depending on whether TET2 is mutated. Briefly, we will use the `importGEO` function to fetch methylation data from GEO and to calculate the mean beta-values for each group and the delta-beta values for each probe. `importGEO` exports a valid bed-formatted data frame, including all probes transformed into the corresponding hg19 genomic coordinate. In case of unresponsive attempts to download GEO data series or download with warnings, try again to fetch data with the same scripts.
 
 ```r
 project.dir <- "~/GSE37362"
@@ -363,10 +359,10 @@ all.samples <- lapply(files, function(samples) {
     loadSeqGEO(file.path=samples, cov=30, chroms="chr19")
 })
 ```
-`all.samples` is a list containing the methylation values of the CpGs in chromosome 19 that are covered with more than or equal to 30 reads. The list includes all the samples (bed.gz files) that have been downloaded in the `~/GSE69272_RAW` folder.
+`all.samples` is a list containing the methylation values of the CpGs in chromosome 19 that are covered by at least 30 reads. The list includes all the samples (bed.gz files) that have been downloaded in the `~/GSE69272_RAW` folder.
 
-\subsection{Vanilla run}
-To sum up, the following commands execute the basic pipeline for the extraction of the most critical DMS:
+\subsection{Demo run}
+The basic steps of the pipeline for the `sample` dataset can be summed up in the following commands:
 
 ```r
 library(MeinteR)
@@ -383,8 +379,9 @@ tfbs <-
     target = "all",
     tf.ID = c("MA0107.1", "MA0098", "MA115.1", "MA0131.2")
   )
-ctfbs <-
-  findConservedTFBS(bed.data, known.conserved.tfbs.file = "~/Downloads/tfbsConsSites.txt.gz")
+#Find overlaps with conserved transcription factors. ~71MB gzipped file 
+#will be downloaded if local path is not set.
+ctfbs <- findConservedTFBS(bed.data)
 shapes <- findShapes(bed.data)
 weights = list()
 weights[["spls"]] = 1
