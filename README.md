@@ -99,7 +99,7 @@ index <- meinter(re.sample, funList, weights)
 
 **Citation**
 
-A. Malousi et al. "MeinteR: A computational method to prioritize aberrant DNA methylation events using local genomic substrate" (submitted)
+A. Malousi et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment" (submitted)
 
 
 
