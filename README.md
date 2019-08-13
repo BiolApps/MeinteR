@@ -30,10 +30,9 @@ install_local(package.folder)
 ```
 **Install from GitHub**
 
-MeinteR and its dependencies can be directly installed from GitHub using the following commands:
+MeinteR and its dependencies can be directly installed from GitHub using devtools:
 ```
-library(devtools)
-devtools::install_gihub("andigoni/meinter")
+devtools::install_github("andigoni/meinter")
 ```
 
 **Source code for use cases**
