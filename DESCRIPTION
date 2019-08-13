@@ -7,7 +7,7 @@ URL: https://github.com/andigoni/MeinteR
 Date: 2019-04-30
 License: GPL-3
 LazyData: TRUE
-Depends: R (>= 3.5.0), Biostrings, pqsfinder, DNAshapeR, FDb.InfiniumMethylation.hg19
+Depends: R (>= 2.10), Biostrings, pqsfinder, DNAshapeR, FDb.InfiniumMethylation.hg19
 Suggests: testthat, knitr
 VignetteBuilder: knitr
 biocViews: DNAMethylation, AlternativeSplicing, DifferentialMethylation, GeneRegulation, Epigenetics,Sequencing,MethylationArray,MethylSeq,EpigeneticsWorkflow
