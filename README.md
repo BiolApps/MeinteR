@@ -33,7 +33,8 @@ MeinteR (MEthylation INTERpretation) is an R package that identifies critical di
 
 [Source Package](dist/MeinteR_0.99.0.tar.gz)
 
-[Package Vignette (PDF)](vignettes/Meinter_vignette.pdf)
+[Package Vignette (PDF)](vignettes/Meinter_vignette.pdf) [(HTML)](https://rpubs.com/andigoni/meinter)
+
 
 [Package Manual (PDF)](vignettes/MeinteR.pdf) 
 
