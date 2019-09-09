@@ -126,7 +126,7 @@ index <- meinter(re.sample, funList, weights)
 ## Contribution, bugs and fixes
 Any contribution by either reporting an issue or suggest further improvements will be appreciated. Refer to the *Issues* and *Wiki* pages of the package for more recent posts.
 
-##Citation
+## Citations
 
 A. Malousi et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment" (under review)
 
