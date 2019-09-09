@@ -11,7 +11,7 @@ loadSeqGEO(file.path, cov = 10, chroms = NULL)
 
 \item{cov}{Minimum read coverage (default:10)}
 
-\item{chroms}{A vector of chromosomes to be included in the analysis (default:ALL)}
+\item{chroms}{A vector of chromosome vector to be included in the analysis (default:ALL)}
 }
 \value{
 A valid bed-formatted data frame

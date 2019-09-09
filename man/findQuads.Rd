@@ -9,7 +9,7 @@ findQuads(bed.data, offset = 100)
 \arguments{
 \item{bed.data}{A data frame containing input bed-formatted data}
 
-\item{offset}{Number of nucleotides expanded on each side (default:100, max:1000)}
+\item{offset}{Number of nucleotides expanded in each direction (default:100, max:1000)}
 }
 \value{
 A DNAString subject with the identified G-quadruplexes, their length and relative coordinates

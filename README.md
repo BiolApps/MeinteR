@@ -1,8 +1,31 @@
 ![Meinter Logo](vignettes/figs/meinter.png)
 
+## Introduction
+
 MeinteR (MEthylation INTERpretation) is an R package that identifies critical differentially methylated sites, based on the following hypothesis: Critical methylation-mediated changes are more likely in genomic regions enriched in cis-acting regulatory elements than in genomic “deserts”. MeinteR calculates the abundance of co-localized elements, such as transcription factor binding sites, tentative splice sites, and other DNA features, such as G-quadruplexes and palindromes that potentially lead to distinct DNA conformational features and rank them with respect to their putative methylation impact.
 
----
+## Main features
+<ul>
+<li>Identification of conformational and cis-regulatory DNA elements:</li>
+<ul>
+<li>G-quadruplex structures</li>
+<li>Palindromes</li>
+<li>Splice sites and known alternative splicing events</li>
+<li>Putative transcription factors and human/mouse/rat conserved transcription factors</li>
+<li>Shape features (minor groove width, roll, propeller twist and helix twist)</li>
+</ul>
+
+<li>Evaluation of genomic substrate enrichment</li>
+<ul>
+<li>Building genomic signatures of each CpG site</li>
+<li>Prioritizing DNA methylation targets</li>
+</ul>
+<li>Batch analysis of user-defined sequence lengths centered at the CpG targets</li>
+<li>Connection with public data repositories e.g. GEO, TCGA/GDC data retrieval </li>
+<li>Auxiliary functions for plotting, converting data</li>
+</ul>
+
+
 
 ## Package files
 
@@ -18,24 +41,27 @@ MeinteR (MEthylation INTERpretation) is an R package that identifies critical di
 
 ## Installation
 
-To install MeinteR and all its dependencies install and load devtools. 
-
-**Local installation ** 
-First, download the binary distribution of the package, unzip it to a local folder and run the following commands:
+To install MeinteR and all its dependencies you need to install and load devtools in R version >=3.5.3 ("Great Truth").
 ```
 library(devtools)
+```
+
+####1) Install a local distribution 
+First, download the binary distribution of the package, unzip it to a local folder and run the following commands:
+```
 #Set folder of the package
 package.folder <- "~/MeinteR"
 install_local(package.folder)
 ```
-**Install from GitHub**
+####2) Install from GitHub
 
 MeinteR and its dependencies can be directly installed from GitHub using devtools:
 ```
-devtools::install_github("andigoni/meinter")
+install_github("andigoni/meinter")
 ```
 
-**Source code for use cases**
+## Example use cases
+The results of the three use cases presented in the manuscript can be reproduced by running the corresponding source code:
 
 [Use Case 1: Genome-wide association of G-quadruplexes with DNA methylation using TCGA/GEO breast cancer datasets](vignettes/UseCase1.Rmd)
 
@@ -45,7 +71,9 @@ devtools::install_github("andigoni/meinter")
 
 
 
-**Demo run**
+## Demo run
+Here is a simple run demonstrating the main functionalities on a sample dataset pre-loaded with the MeinteR package.
+
 
 ```
 library(MeinteR)
@@ -93,12 +121,14 @@ funList[["quads"]] = quads
 funList[["shapes"]] = shapes
 #Calculate genomic index
 index <- meinter(re.sample, funList, weights)
-
 ```
 
-**Citation**
+## Contribution, bugs and fixes
+Any contribution by either reporting an issue or suggest further improvements will be appreciated. Refer to the *Issues* and *Wiki* pages of the package for more recent posts.
 
-A. Malousi et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment" (submitted)
+##Citation
+
+A. Malousi et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment" (under review)
 
 
 

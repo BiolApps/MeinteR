@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/521280/46a71bfc36c7498eb89eaa710c878a25
+bundleId: https://api.rpubs.com/api/v1/document/521280/46a71bfc36c7498eb89eaa710c878a25
+url: http://rpubs.com/andigoni/521280/edit
+when: 1566407874.63158

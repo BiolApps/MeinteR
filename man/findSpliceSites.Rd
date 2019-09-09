@@ -11,7 +11,7 @@ findSpliceSites(bed.data, persim = 0.8, offset = 10)
 
 \item{persim}{Similarity with the splice site consensus (default:0.8, range between [0,1])}
 
-\item{offset}{Number of nucleotides expanded on each side (default:10, min:5, max:50)}
+\item{offset}{Number of nucleotides expanded in each direction (default:10, min:5, max:50)}
 }
 \value{
 1/ A detailed table with the location of the detected splice sites in each

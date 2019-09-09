@@ -2,6 +2,7 @@
 ## Package    : MeinteR
 ## File       : misc.R
 ## Functions  : loadFile (exported)
+##            : importLimma (exported)
 ##            : bed2Seq (exported)
 ##            : nameStudy (exported)
 ##            : isEmptyDF
@@ -19,7 +20,7 @@
 ##            : probesChr
 ##            : loadSeqGEO (exported)
 ##            : mval2beta
-## Updated    : 30-04-2019
+## Updated    : 20-08-2019
 ##
 ## Title      : Miscellaneous functions
 #############################################################################
@@ -79,7 +80,8 @@ bioconductor.packages <-
     "GenomicFeatures",
     "XVector",
     "GEOquery",
-    "FDb.InfiniumMethylation.hg19"
+    "FDb.InfiniumMethylation.hg19",
+    "IlluminaHumanMethylationEPICanno.ilm10b2.hg19"
   )
 bioc.packages <-
   bioconductor.packages[!(bioconductor.packages  %in% installed.packages()[, "Package"])]
@@ -120,6 +122,54 @@ loadFile <- function(FH) {
   message("Use reorderbed function to change the column names and order.")
   return(bed.data)
 }
+
+#'Imports the results of differential methylation analyses exported by \code{limma}
+#'
+#'
+#' @param ltop.obj Output of \code{limma} differential analysis. The output data frame produced by the \code{limma::topTable} function.
+#' @param platform A string corresponding to the human methylation array. Possible values are "hm27k", "hm450k" and "EPIC" (default:hm450k)
+#' @param sortBy The criterion for selecting probes of the MArrayLM object. Possible values are: "logFC", "P.Value", "adj.P.Val"
+#' @return  df A well-formatted data frame to be used as input to the MeinteR workflow.
+#' @export
+ 
+importLimma <- function(ltop.obj, platform = "hm450k", sortBy="adj.P.Val") {
+  platform.list <- c("hm450k", "hm27k", "epic")
+  ltop.obj.cols <- c("logFC","AveExpr","t","P.Value","adj.P.Val","B")
+  if (!exists("platform")){platform = "hm450k"}
+  if (!exists("sortBy")){sortBy="adj.P.Val"}
+  `%notin%` <- Negate(`%in%`)
+  if (tolower(platform) %notin% (platform.list)) {stop("Invalid platform. Accepted platforms: hm27k, hm450k and epic.")}
+  if (sum(colnames(ltop.obj) %notin% (ltop.obj.cols))>0) {stop("Invalid input format. Accepted input: limma::topTable data frame")}
+  if (sortBy %notin% (ltop.obj.cols)){stop("Invalid value. Accepted inputs: limma::topTable data frame columns")}
+    if (tolower(platform)==platform.list[1]){ 
+    hm450k <- as.data.frame(get450k())
+    platform.probes <- data.frame(hm450k[, 1:3], strand="+")
+    colnames(platform.probes) = c("chr", "start","end","strand")
+  }
+  if (tolower(platform)==platform.list[2]){ 
+    hm27k <- as.data.frame(get27k())
+    platform.probes <- data.frame(hm27k[, 1:3], strand="+")
+    colnames(platform.probes) = c("chr", "start","end","strand")
+    }
+  if (tolower(platform)==platform.list[3]){      
+    epic = getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+    platform.probes = data.frame(epic[,1:2], epic[,2]+1, epic[,3])
+    colnames(platform.probes) = c("chr", "start","end","strand")
+  }
+    if (sum(rownames(ltop.obj) %notin% rownames(platform.probes))>0) {
+      inv.probes <- which(rownames(ltop.obj) %notin% rownames(platform.probes)==TRUE)
+      if (length(inv.probes)>100) {stop("More than 100 invalid probe ids are detected. Rownames should be probe ids e.g. cg03607359.")} else {
+      message(paste(c("Invalid probes at lines: ", inv.probes), collapse=" "))}
+      stop(paste("Rownames of ltop.obj should be",platform,"probe ids."))}
+      lobj <- data.frame("score"=ltop.obj[,colnames(ltop.obj)==sortBy])
+      rownames(lobj)=rownames(ltop.obj)
+  res <- merge(lobj, platform.probes, by="row.names",all.x=TRUE)
+  res <- reorderBed(res,3,4,5,2,6)
+  return(res)
+  
+}
+
+
 
 #'Fetch sequences from bed-formatted data frames
 #' @param bedline  Valid bed-formatted data frame
@@ -597,11 +647,16 @@ validateGEO <- function(gse.list) {
 }
 
 groupGEO <- function(anno.df, beta.df) {
+  message("Grouping samples...")
   options(scipen = 999)
-  class.g1 <-
-    subset(anno.df, anno.df$status == unique(anno.df$status)[1])
-  class.g2 <-
-    subset(anno.df, anno.df$status == unique(anno.df$status)[2])
+  #class.g1 if for tumor
+  if (toupper(anno.df$status[1])=="NORMAL") {
+    class.g1 <- subset(anno.df, anno.df$status == unique(anno.df$status)[2])
+    class.g2 <- subset(anno.df, anno.df$status == unique(anno.df$status)[1])
+  } else {
+  class.g1 <- subset(anno.df, anno.df$status == unique(anno.df$status)[1])
+  class.g2 <-subset(anno.df, anno.df$status == unique(anno.df$status)[2])
+  }
   beta.g1 <- as.data.frame(beta.df[, class.g1[, 1]])
   beta.g2 <- as.data.frame(beta.df[, class.g2[, 1]])
   d.beta <-
@@ -614,11 +669,11 @@ groupGEO <- function(anno.df, beta.df) {
   grp1 <- as.data.frame(rowMeans(beta.g1, na.rm = TRUE))
   grp1$probes <- rownames(grp1)
   rownames(grp1) <- NULL
-  colnames(grp1) <- c(unique(anno.df$status)[1], "probes")
+  colnames(grp1) <- c("tumor", "probes")
   grp2 <- as.data.frame(rowMeans(beta.g2, na.rm = TRUE))
   grp2$probes <- rownames(grp2)
   rownames(grp2) <- NULL
-  colnames(grp2) <- c(unique(anno.df$status)[2], "probes")
+  colnames(grp2) <- c("normal", "probes")
   result <- list()
   result[[1]] <- db
   result[[2]] <- grp1

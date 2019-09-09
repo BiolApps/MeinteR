@@ -10,7 +10,7 @@ findAltSplicing(bed.data, known.alt.splice = NULL)
 \item{bed.data}{A data frame containing input bed-formatted data}
 
 \item{known.alt.splice}{(optional) Full local path to the UCSC knownalt table.
-If the table is not available locally the script will fetch known alternative splicing
+If the table is not available locally then the script will fetch known alternative splicing
 events from UCSC (needs Internet connection).}
 }
 \value{

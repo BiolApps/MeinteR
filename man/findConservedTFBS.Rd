@@ -10,7 +10,7 @@ findConservedTFBS(bed.data, known.conserved.tfbs.file = NULL)
 \item{bed.data}{A data frame containing input bed-formatted data}
 
 \item{known.conserved.tfbs.file}{(optional) Full local path to the UCSC conserved transcription factor binding sites.
-If the table is not available locally then the script will fetch it from UCSC (Internet connection needed).
+If the table is not available locally then the script will fetch it from UCSC (needs Internet connection).
 NOTE: It is recommended to download the compressed file (Unzipped file >290MB)}
 }
 \value{

@@ -4,12 +4,15 @@
 \alias{findShapes}
 \title{Find putative conformational DNA changes}
 \usage{
-findShapes(bed.data, offset = 50)
+findShapes(bed.data, offset = 50, shape.plot = FALSE)
 }
 \arguments{
 \item{bed.data}{A data frame containing input bed-formatted data}
 
-\item{offset}{Number of nucleotides expanded on each side (default:50, max:200)}
+\item{offset}{Number of nucleotides expanded in each direction (default:50, max:200)}
+
+\item{shape.plot}{A logical flag. If TRUE, the function will display a multi-plot with the 
+conformational changes. (default: FALSE)}
 }
 \value{
 1/ p-value of the MGW in the unmethylated/methylated CpG context for each sequence
@@ -22,6 +25,6 @@ findShapes(bed.data, offset = 50)
 }
 \description{
 Predicts conformational changes of DNA shapes, such as
-minor groove width (MGW), Roll, propeller twist (ProT) and helix twist (HeIT)
+minor groove width (MGW), roll, propeller twist (ProT) and helix twist (HeIT)
 in the unmethylated and methylated context using methyl-DNAshape algorithm.
 }

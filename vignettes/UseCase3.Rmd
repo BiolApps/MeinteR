@@ -76,27 +76,18 @@ evaluation3 <- function(DEX, aggr, pirate.title, logfc.low=logfc.low, logfc.high
              xlab = bquote('logfc'),
              ylab = " ")
   
-  point.sizes <- runif(100, min = .2, max = 2) # Just for fun
+ legend_title <- "|logfc|"
+  ggplot(aggr, aes(abs(logFC), g.index, color=abs(logFC))) +
+    geom_point(shape = 16, size = 4, show.legend = TRUE) +
+    theme_minimal()+
+    scale_color_gradient2(legend_title, low = "#73D055FF", mid= "#FDE725FF", high = "#440154FF") +
+    labs(x = "|logfc|", y = "Genomic index") + 
+    theme(axis.text.x = element_text(hjust = 1, size=13, color="black"))+
+    theme(axis.text.y = element_text(hjust = 1, size=13, color="black"))+
+    theme(axis.title.y = element_text(size = rel(1.8), angle = 90)) +
+    stat_smooth(method="lm", se=TRUE, color="#39568CFF")+
+    theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
   
-  plot(abs(aggr$logFC), aggr$g.index,
-       pch = 21,
-       bg = piratepal("pony", trans = .1),
-       col = "white",
-       bty = "n",
-       cex = point.sizes,
-       cex.lab = 1.8,
-       cex.axis = 1.8,
-       cex.names = 1.8,
-       xlab = bquote('|logfc|'),
-       ylab = " ")
-  mtext("Genomic index",side=2, font=10, cex=2, line =2.5)
-  
-  grid() # Add gridlines
-  model <- lm(formula = abs(logFC) ~ g.index,
-              data = aggr)
-  abline(model,
-         col = 'black', lwd=3, lty=2)
-  summary(model)
   
   
   aggr$score.bin <- aggr$score < 0 #if TRUE then DMS-

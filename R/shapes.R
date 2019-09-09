@@ -12,18 +12,20 @@
 #' Find putative conformational DNA changes
 #'
 #' Predicts conformational changes of DNA shapes, such as
-#' minor groove width (MGW), Roll, propeller twist (ProT) and helix twist (HeIT)
+#' minor groove width (MGW), roll, propeller twist (ProT) and helix twist (HeIT)
 #' in the unmethylated and methylated context using methyl-DNAshape algorithm.
 #'
 #' @param bed.data A data frame containing input bed-formatted data
 #' @param offset Number of nucleotides expanded in each direction (default:50, max:200)
+#' @param shape.plot A logical flag. If TRUE, the function will display a multi-plot with the 
+#' conformational changes. (default: FALSE)
 #' @return 1/ p-value of the MGW in the unmethylated/methylated CpG context for each sequence
 #' @return 2/ p-value of the HeIT in the unmethylated/methylated CpG context for each sequence
 #' @return 3/ p-value of the ProT in the unmethylated/methylated CpG context for each sequence
 #' @return 4/ p-value of the Roll in the unmethylated/methylated CpG context for each sequence
 #' @export
 
-findShapes <- function(bed.data, offset = 50) {
+findShapes <- function(bed.data, offset = 50, shape.plot = FALSE) {
   if (offset > 200 | offset < 0) {
     stop('Valid offset: [1..200]')
   }
@@ -115,7 +117,7 @@ findShapes <- function(bed.data, offset = 50) {
   colnames(p.ProT) <- c("seqname", "p.ProT")
   p.Roll <- cbind(bed.coor, wt.Roll)
   colnames(p.Roll) <- c("seqname", "p.Roll")
-  
+  if (shape.plot){
   par(mfrow = c(4, 2))
   plotShape(pred$MGW, main = "Unethylated Minor Groove Width")
   panel.first = grid(equilogs = FALSE)
@@ -143,10 +145,8 @@ findShapes <- function(bed.data, offset = 50) {
     colLine = 'red'
   )
   panel.first = grid(equilogs = FALSE)
-  results = list()
-  results[[1]] <- p.MGW
-  results[[2]] <- p.HelT
-  results[[3]] <- p.ProT
-  results[[4]] <- p.Roll
-  return(results)
+  dev.off()
+  }
+  return(list(p.MGW,p.HelT,p.ProT,p.Roll))
 }
+
