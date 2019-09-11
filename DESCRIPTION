@@ -1,17 +1,17 @@
 Package: MeinteR
 Type: Package
-Title: MeinteR (MEthylation INTERpretation): A computational method to prioritize aberrant DNA methylation using local genomic substrate 
-Description: MeinteR builds genomic signatures of differential methylated sites based on a set of transcriptional regulatory elements and prioritizes critical sites that more likely have strong influence on phenotype expression.
+Title: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment 
+Description: This package builds genomic signatures of differential methylated sites based on a set of transcriptional regulatory elements and prioritizes critical sites that more likely have strong influence on phenotype expression.
 Version: 0.99.0
 URL: https://github.com/andigoni/MeinteR
-Date: 2019-04-30
+Date: 2019-08-30
 License: GPL-3
 LazyData: TRUE
-Depends: R (>= 2.10), Biostrings, pqsfinder, DNAshapeR, FDb.InfiniumMethylation.hg19,IlluminaHumanMethylationEPICanno.ilm10b4.hg19
+Depends: R (>= 2.10), Biostrings, pqsfinder, DNAshapeR, FDb.InfiniumMethylation.hg19
 Suggests: testthat, knitr
 VignetteBuilder: knitr
 biocViews: DNAMethylation, AlternativeSplicing, DifferentialMethylation, GeneRegulation, Epigenetics,Sequencing,MethylationArray,MethylSeq,EpigeneticsWorkflow
-Imports: GenomicRanges, BSgenome.Hsapiens.UCSC.hg19, ggplot2, dplyr, plyr, rtracklayer, BSgenome, tidyverse, XVector, GenomeInfoDb, S4Vectors, stats4, stats, IRanges, BiocGenerics, parallel, reshape2, TFBSTools, JASPAR2018, graphics, utils, grDevices, TxDb.Hsapiens.UCSC.hg19.knownGene, GenomicFeatures, GEOquery, Biobase
+Imports: GenomicRanges, BSgenome.Hsapiens.UCSC.hg19, IlluminaHumanMethylationEPICanno.ilm10b4.hg19, ggplot2, dplyr, plyr, rtracklayer, BSgenome, tidyverse, XVector, GenomeInfoDb, GenomeInfoDbData, S4Vectors, stats4, stats, IRanges, BiocGenerics, parallel, reshape2, TFBSTools, JASPAR2018, graphics, utils, grDevices, TxDb.Hsapiens.UCSC.hg19.knownGene, GenomicFeatures, GEOquery, Biobase
 Author: Andigoni Malousi <andigoni@auth.gr>
 Maintainer: Andigoni Malousi <andigoni@auth.gr>
 RoxygenNote: 6.1.1

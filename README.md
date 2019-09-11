@@ -42,24 +42,25 @@ MeinteR (MEthylation INTERpretation) is an R package that identifies critical di
 
 ## Installation
 
-To install MeinteR and all its dependencies you need to install and load devtools in R version >=3.5.3 ("Great Truth").
+
+### 1) Install from GitHub
+
+To install MeinteR and all its dependencies first you need to install devtools in R version >=3.5.3 ("Great Truth"). Upon successful installation run the following command: 
 ```
-library(devtools)
+devtools::install_github("andigoni/meinter")
+```
+### 2) Install local distribution (binary)
+First, download the binary distribution of the package and run the following command in R console (set path <PATH_TO_MEINTER> appropriately):
+```
+install.packages("<PATH_TO_MEINTER>/MeinteR_0.99.0.tgz", repos = NULL, type = .Platform$pkgType)
 ```
 
-####1) Install a local distribution 
-First, download the binary distribution of the package, unzip it to a local folder and run the following commands:
+### 3) Install local distribution (source)
+First, download the source distribution of the package and run the following command in R console (set path <PATH_TO_MEINTER> appropriately):
 ```
-#Set folder of the package
-package.folder <- "~/MeinteR"
-install_local(package.folder)
+install.packages("<PATH_TO_MEINTER>/MeinteR_0.99.0.tar.gz", repos = NULL, type = "source")
 ```
-####2) Install from GitHub
 
-MeinteR and its dependencies can be directly installed from GitHub using devtools:
-```
-install_github("andigoni/meinter")
-```
 
 ## Example use cases
 The results of the three use cases presented in the manuscript can be reproduced by running the corresponding source code:

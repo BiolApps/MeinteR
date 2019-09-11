@@ -4,13 +4,6 @@ date: '9 September 2019'
 bibliography: Meinter.bib
 csl: bibl.csl
 output:
-  pdf_document:
-    fig_caption: yes
-    fig_height: 3
-    fig_width: 4
-    highlight: tango
-    number_sections: yes
-    toc: yes
   html_document:
     highlight: espresso
     theme: spacelab
@@ -18,6 +11,13 @@ output:
     fig_caption: yes
     keep_md: yes
     number_sections: yes
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    highlight: tango
+    number_sections: yes
+    toc: yes
   word_document:
     fig_caption: yes
 vignette: >
@@ -34,11 +34,6 @@ To download and install MeinteR and its dependencies, you need to install `devto
 
 ```
 devtools::install_github("andigoni/meinter")
-```
-Alternatively, download the binary installation file, unzip it to a folder e.g. `~/MeinteR` and run the following commands:
-```
-package.folder <- "~/MeinteR"
-install_local(package.folder)
 ```
 
 Upon successful installation of the package, load MeinteR and all its dependencies in the workspace using:

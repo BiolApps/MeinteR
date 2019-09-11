@@ -4,7 +4,7 @@ username:
 account: rpubs
 server: rpubs.com
 hostUrl: rpubs.com
-appId: https://api.rpubs.com/api/v1/document/521280/46a71bfc36c7498eb89eaa710c878a25
-bundleId: https://api.rpubs.com/api/v1/document/521280/46a71bfc36c7498eb89eaa710c878a25
-url: http://rpubs.com/andigoni/521280/edit
-when: 1566407874.63158
+appId: https://api.rpubs.com/api/v1/document/527111/e70d0d6209bb41819fb463d6271c5d84
+bundleId: https://api.rpubs.com/api/v1/document/527111/e70d0d6209bb41819fb463d6271c5d84
+url: http://rpubs.com/publish/claim/527111/ec0c311bdd2e42079d3ce26d05b8aa10
+when: 1568190916.64479
