@@ -32,63 +32,63 @@ pkg.env <- new.env()
 local(NAME <- "study", envir = pkg.env)
 
 #Install package dependencies
-packages <-
-  c(
-    "ggplot2",
-    "plyr",
-    "stats4",
-    "reshape2",
-    "tidyverse",
-    "XVector",
-    "GenomeInfoDb",
-    "S4Vectors",
-    "stats",
-    "IRanges",
-    "BiocGenerics",
-    "parallel",
-    "base",
-    "reshape2",
-    "grDevices",
-    "graphics",
-    "utils"
-  )
-new.packages <-
-  packages[!(packages %in% installed.packages()[, "Package"])]
-if (length(new.packages))
-  install.packages(new.packages)
-
-bioconductor.packages <-
-  c(
-    "TFBSTools",
-    "TxDb.Hsapiens.UCSC.hg19.knownGene",
-    "Biostrings",
-    "BSgenome",
-    "pqsfinder",
-    "Biobase",
-    "DNAshapeR",
-    "JASPAR2018",
-    "BSgenome.Hsapiens.UCSC.hg19",
-    "GenomicRanges",
-    "rtracklayer",
-    "BiocGenerics",
-    "S4Vectors",
-    "JASPAR2018",
-    "IRanges",
-    "pqsfinder",
-    "GenomeInfoDb",
-    "BSgenome",
-    "GenomicFeatures",
-    "XVector",
-    "GEOquery",
-    "FDb.InfiniumMethylation.hg19",
-    "IlluminaHumanMethylationEPICanno.ilm10b2.hg19"
-  )
-bioc.packages <-
-  bioconductor.packages[!(bioconductor.packages  %in% installed.packages()[, "Package"])]
-if (length(bioc.packages)) {
-  source("http://bioconductor.org/biocLite.R")
-  biocLite(bioc.packages)
-}
+# packages <-
+#   c(
+#     "ggplot2",
+#     "plyr",
+#     "stats4",
+#     "reshape2",
+#     "tidyverse",
+#     "XVector",
+#     "GenomeInfoDb",
+#     "S4Vectors",
+#     "stats",
+#     "IRanges",
+#     "BiocGenerics",
+#     "parallel",
+#     "base",
+#     "reshape2",
+#     "grDevices",
+#     "graphics",
+#     "utils"
+#   )
+# new.packages <-
+#   packages[!(packages %in% installed.packages()[, "Package"])]
+# if (length(new.packages))
+#   install.packages(new.packages)
+# 
+# bioconductor.packages <-
+#   c(
+#     "TFBSTools",
+#     "TxDb.Hsapiens.UCSC.hg19.knownGene",
+#     "Biostrings",
+#     "BSgenome",
+#     "pqsfinder",
+#     "Biobase",
+#     "DNAshapeR",
+#     "JASPAR2018",
+#     "BSgenome.Hsapiens.UCSC.hg19",
+#     "GenomicRanges",
+#     "rtracklayer",
+#     "BiocGenerics",
+#     "S4Vectors",
+#     "JASPAR2018",
+#     "IRanges",
+#     "pqsfinder",
+#     "GenomeInfoDb",
+#     "BSgenome",
+#     "GenomicFeatures",
+#     "XVector",
+#     "GEOquery",
+#     "FDb.InfiniumMethylation.hg19",
+#     "IlluminaHumanMethylationEPICanno.ilm10b2.hg19"
+#   )
+# bioc.packages <-
+#   bioconductor.packages[!(bioconductor.packages  %in% installed.packages()[, "Package"])]
+# if (length(bioc.packages)) {
+#   source("http://bioconductor.org/biocLite.R")
+#   biocLite(bioc.packages)
+# }
 
 
 
