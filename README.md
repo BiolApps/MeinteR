@@ -49,13 +49,8 @@ To install MeinteR and all its dependencies first you need to install devtools i
 ```
 devtools::install_github("andigoni/meinter")
 ```
-### 2) Install local distribution (binary)
-First, download the binary distribution of the package and run the following command in R console (set path <PATH_TO_MEINTER> appropriately):
-```
-install.packages("<PATH_TO_MEINTER>/MeinteR_0.99.0.tgz", repos = NULL, type = .Platform$pkgType)
-```
 
-### 3) Install local distribution (source)
+### 2) Install local distribution (source)
 First, download the source distribution of the package and run the following command in R console (set path <PATH_TO_MEINTER> appropriately):
 ```
 install.packages("<PATH_TO_MEINTER>/MeinteR_0.99.0.tar.gz", repos = NULL, type = "source")
