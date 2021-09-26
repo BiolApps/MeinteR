@@ -125,8 +125,7 @@ Any contribution by either reporting an issue or suggest further improvements wi
 
 ## Citation
 
-A. Malousi et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment" (under review)
-
+Malousi, Andigoni, et al. "MeinteR: A framework to prioritize DNA methylation aberrations based on conformational and cis-regulatory element enrichment." Scientific reports 9.1 (2019): 1-12.
 ## License
 The package is licensed under GPL version 3.
 
